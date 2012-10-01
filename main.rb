@@ -2,6 +2,7 @@ require 'gosu'
 require './game'
 require './constants'
 require './input_handler'
+require './renderer'
 
 class GameWindow < Gosu::Window
   
@@ -11,8 +12,7 @@ class GameWindow < Gosu::Window
     super 1280, 800, false
     self.caption = "The Editor"
     @game = Game.new
-    @dialog_font = Gosu::Font.new(self, Gosu::default_font_name, 20)
-    @mouse_img = Gosu::Image.new(self, "./media/mouse.png")
+    @renderer = Renderer.new(self)
   end
 
   def update
@@ -20,16 +20,7 @@ class GameWindow < Gosu::Window
   end
 
   def draw
-    set_background # because I like a nice white background better
-    @mouse_img.draw(self.mouse_x, self.mouse_y, Constants::Z_POSITIONS[:mouse])
-  end
-
-  def set_background
-    w = Gosu::Color::WHITE
-    draw_quad(0, 0, w, 
-              width, 0, w,
-              width, height, w,
-              0, height, w)
+    @renderer.paint(@game)
   end
 
 end
