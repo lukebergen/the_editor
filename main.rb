@@ -19,21 +19,21 @@ class GameWindow < Gosu::Window
     @game = Game.new
     @renderer = Renderer.new(self)
     @media_manager = MediaManager.new(self)
-    @s = File.read(__FILE__).gsub(/\n/,  "")
   end
 
   def update
     @game.tick
+    @fps = "fps: #{Gosu::fps}"
   end
 
   def draw
     @renderer.paint(@game)
-    @renderer.draw_text(@s)
+    @renderer.draw_text(@fps)
   end
 
   def do_debugger
     debugger
-    x = 3
+    noop = nil
   end
 
 end
