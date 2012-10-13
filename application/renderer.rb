@@ -9,6 +9,14 @@ class Renderer
     set_background
 
     @mouse_img.draw(@window.mouse_x, @window.mouse_y, Constants::Z_POSITIONS[:mouse])
+
+    if @s
+      @dialog_font.draw(@s, 0, 0, 0, 1, 1, Gosu::Color::BLACK)
+    end
+  end
+
+  def draw_text(text)
+    @s = text
   end
 
   def set_background

@@ -5,6 +5,9 @@ module InputHandler
       if id == Gosu::KbEscape
         close
       end
+      if id == Gosu::KbD
+        do_debugger
+      end
     end
 
   end
