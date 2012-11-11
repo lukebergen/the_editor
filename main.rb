@@ -36,7 +36,16 @@ class GameWindow < Gosu::Window
     noop = nil
   end
 
+  def reload!
+    exec("ruby main.rb console")
+  end
+
 end
 
-win = GameWindow.new
-win.show
+if (ARGV[0] == "console")
+  win = GameWindow.new
+  win.do_debugger
+else
+  win = GameWindow.new
+  win.show
+end
