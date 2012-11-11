@@ -2,10 +2,13 @@ MODULES_DIR = File.join([APPLICATION_DIR, 'go_modules'])
 
 class GameObject
 
+  attr_accessor :modules, :attributes
+  attr_reader :code_string
+
   def initialize
     @attributes = {}
     @modules = []
-    @code_string = File.read(__FILE__)
+    @code_string = File.read(__FILE__).gsub(/^[ ]*/, '')
   end
 
   def add_attribute(name)
@@ -20,17 +23,13 @@ class GameObject
     const = constantize(mod_name)
     @modules << mod_name
     self.extend(const)
-    text = (File.read(File.join([MODULES_DIR, "#{mod_name}.rb"])) rescue '')
+    text = (File.read(File.join([MODULES_DIR, "#{mod_name}.rb"])) rescue '').gsub(/^[ ]*/, '')
     @code_string << "\n" + text
     self
   end
 
   def add_modules(*args)
     args.flatten.each {|m| add_module(m)}
-  end
-
-  def modules
-    @modules
   end
 
   def constantize(camel_cased_word)
