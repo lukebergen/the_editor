@@ -20,12 +20,15 @@ class GameObject
   end
 
   def add_module(mod_name)
-    const = constantize(mod_name)
-    @modules << mod_name
-    self.extend(const)
-    text = (File.read(File.join([MODULES_DIR, "#{mod_name}.rb"])) rescue '').gsub(/^[ ]*/, '')
-    @code_string << "\n" + text
-    self
+    unless @modules.include?(mod_name)
+      const = constantize(mod_name)
+      required = (const::REQUIRES rescue [])
+      add_modules(required)
+      self.extend(const)
+      text = (File.read(File.join([MODULES_DIR, "#{mod_name}.rb"])) rescue '').gsub(/^[ ]*/, '')
+      @code_string << "\n" + text
+      @modules << mod_name
+    end
   end
 
   def add_modules(*args)
