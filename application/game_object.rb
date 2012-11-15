@@ -35,6 +35,10 @@ class GameObject
     args.flatten.each {|m| add_module(m)}
   end
 
+  def has_module(m)
+    @modules.include?(m)
+  end
+
   def constantize(camel_cased_word)
     names = camel_cased_word.split('::')
     names.shift if names.empty? || names.first.empty?

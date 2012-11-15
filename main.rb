@@ -18,7 +18,6 @@ class GameWindow < Gosu::Window
     self.caption = "The Editor"
     @game = Game.new
     @renderer = Renderer.new(self)
-    @media_manager = MediaManager.new(self)
   end
 
   def update

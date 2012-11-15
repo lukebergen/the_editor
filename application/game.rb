@@ -7,19 +7,23 @@ end
 
 class Game
 
+  attr_accessor :objects
+
   def initialize
-    load_game_objects
-    load_media
+    @objects = load_game_objects
+  end
+
+  def load_game_objects
+    go = GameObject.new
+    go.add_module("Displayable")
+    go.attributes[:current_image] = "chair.png"
+    go.attributes[:x] = 20
+    go.attributes[:y] = 20
+    return [go]
   end
 
   def tick
 
   end
 
-  def load_game_objects
-  end
-
-  def load_media
-  end
-  
 end
