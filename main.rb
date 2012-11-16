@@ -1,11 +1,13 @@
 APPLICATION_DIR = "./application"
 require 'gosu'
 require 'debugger'
+require 'yaml'
 require File.join([APPLICATION_DIR, 'game'])
 require File.join([APPLICATION_DIR, 'media_manager'])
 require File.join([APPLICATION_DIR, 'constants'])
 require File.join([APPLICATION_DIR, 'input_handler'])
 require File.join([APPLICATION_DIR, 'renderer'])
+require File.join([APPLICATION_DIR, 'utils'])
 
 class GameWindow < Gosu::Window
   

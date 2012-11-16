@@ -1,5 +1,6 @@
 class Constants
   Z_POSITIONS = {
-    mouse: 10
+    mouse: 1000,
+    default_game_object: 100
   }
 end

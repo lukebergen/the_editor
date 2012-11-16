@@ -21,7 +21,7 @@ class GameObject
 
   def add_module(mod_name)
     unless @modules.include?(mod_name)
-      const = constantize(mod_name)
+      const = Utils.constantize(mod_name)
       required = (const::REQUIRES rescue [])
       add_modules(required)
       self.extend(const)
@@ -37,16 +37,6 @@ class GameObject
 
   def has_module(m)
     @modules.include?(m)
-  end
-
-  def constantize(camel_cased_word)
-    names = camel_cased_word.split('::')
-    names.shift if names.empty? || names.first.empty?
-    constant = Object
-    names.each do |name|
-      constant = constant.const_defined?(name) ? constant.const_get(name) : constant.const_missing(name)
-    end
-    constant
   end
 
 end

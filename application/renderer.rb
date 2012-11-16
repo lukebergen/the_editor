@@ -21,7 +21,7 @@ class Renderer
         current_image = @media_manager.images[go.attributes[:current_image]]
         if (x && y && current_image)
           fx = fy = 1
-          z ||= 0
+          z ||= Constants::Z_POSITIONS[:default_game_object]
           if (height || width)
             fx, fy = stretch_factor(current_image, height, width)
           end
