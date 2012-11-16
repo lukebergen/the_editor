@@ -38,10 +38,10 @@ class Renderer
   def stretch_factor(image, stretch_to_height, stretch_to_width)
     x = y = 1
     if (stretch_to_height)
-      y = stretch_to_height / current_image.height.to_f
+      y = stretch_to_height / image.height.to_f
     end
     if (stretch_to_width)
-      x = stretch_to_width / current_image.width.to_f
+      x = stretch_to_width / image.width.to_f
     end
     return x, y
   end
