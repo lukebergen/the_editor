@@ -12,10 +12,11 @@ end
 
 class Game
 
-  attr_accessor :objects
+  attr_accessor :objects, :current_map
 
   def initialize
     @objects = load_game_objects
+    @current_map = "dev_area"
   end
 
   def load_game_objects

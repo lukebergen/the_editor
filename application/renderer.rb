@@ -1,4 +1,9 @@
+require 'json'
+
 class Renderer
+
+  attr_accessor :media_manager
+
   def initialize(window)
     @window = window
     @media_manager = MediaManager.new(@window)
@@ -10,6 +15,8 @@ class Renderer
     set_background
 
     @mouse_img.draw(@window.mouse_x, @window.mouse_y, Constants::Z_POSITIONS[:mouse])
+
+    render_map(game.current_map)
 
     game.objects.each do |go|
       if (go.has_module('Displayable'))
@@ -32,6 +39,25 @@ class Renderer
 
     if @s
       @dialog_font.draw(@s, 0, 0, 0, 1, 1, Gosu::Color::BLACK)
+    end
+  end
+
+  def render_map(map_name)
+    map = media_manager.maps[map_name]
+    tileset = media_manager.tilesets[map.tileset]
+    mul = tileset.tile_size
+    map.tiles.each_with_index do |row_arr, row|
+      row_arr.each_with_index do |tile_data, col|
+        # first paint the bottom tile
+        img = tileset.tiles[tile_data[0]][tile_data[1]]
+        img.draw(col * mul, row * mul, Constants::Z_POSITIONS[:bottom_tile])
+        
+        # then paint the top tile
+        img = tileset.tiles[tile_data[2]][tile_data[3]]
+        img.draw(col * mul, row * mul, Constants::Z_POSITIONS[:top_tile])
+
+        # figure out blocking later
+      end
     end
   end
 

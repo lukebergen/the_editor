@@ -7,13 +7,15 @@ require File.join([APPLICATION_DIR, 'media_manager'])
 require File.join([APPLICATION_DIR, 'constants'])
 require File.join([APPLICATION_DIR, 'input_handler'])
 require File.join([APPLICATION_DIR, 'renderer'])
+require File.join([APPLICATION_DIR, 'tileset'])
+require File.join([APPLICATION_DIR, 'map'])
 require File.join([APPLICATION_DIR, 'utils'])
 
 class GameWindow < Gosu::Window
   
   include InputHandler
 
-  attr_accessor :media_manager
+  attr_accessor :renderer
 
   def initialize
     super 1280, 800, false
