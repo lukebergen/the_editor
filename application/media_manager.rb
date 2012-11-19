@@ -32,14 +32,8 @@ class MediaManager
     tileset_hash = {}
     tileset_paths = Dir.glob("#{TILESETS_DIR}/*")
     tileset_paths.each do |path|
-      key = File.basename(path)
-      json = File.read(File.join([path, "data.json"]))
-      image_path = File.join([path, "tiles.png"])
-      data = JSON.load(json)
-      tile_images = Gosu::Image.load_tiles(@window, image_path, data["tile_size"], data["tile_size"], true)
-      arr = tile_images.group_by {|x| tile_images.index(x) / data["width"]}.values
-      ts = Tileset.new(key, data["tile_size"], arr)
-      tileset_hash[key] = ts
+      ts = Tileset.new(@window, path)
+      tileset_hash[ts.name] = ts
     end
     tileset_hash
   end
