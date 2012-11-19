@@ -13,4 +13,14 @@ class Map
       @tileset = map_hash["tileset"]
     end
   end
+
+  def to_json
+    h = {}
+    h["name"] = @name
+    h["height"] = @height
+    h["width"] = @width
+    h["tiles"] = @tiles
+    h["tileset"] = @tileset
+    JSON.dump(h)
+  end
 end
