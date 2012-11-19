@@ -24,7 +24,7 @@ class GameWindow < Gosu::Window
       @map.height.times do
         arr = []
         @map.width.times do
-          arr << []#[0,0,0,0,0]
+          arr << [0,0,0,0,0]
         end
         @map.tiles << arr
       end
@@ -56,7 +56,7 @@ class GameWindow < Gosu::Window
     end
 
     if @text
-      @dialog_font.draw(@text, 0, 0, 0, 1, 1, Gosu::Color::BLACK)
+      @dialog_font.draw(@text, 0, 0, 9000, 1, 1, Gosu::Color::BLACK)
       if (@timer <= 0)
         @text = nil
       else
@@ -103,29 +103,31 @@ class GameWindow < Gosu::Window
       File.open("./#{@map.name}.map", 'w') {|f| f.write(json)}
     end
     if id == Gosu::KbT
-      notify("Selecting Tile")
       @selecting_tile = true
     end
     if id == Gosu::KbO
-      notify("Selecting Object")
+      # select object
     end
     if id == Gosu::KbX
-      notify("currently over: #{@currently_over[0]}, #{@currently_over[1]}")
+      # used for debugging stuff
     end
     if id == Gosu::MsLeft
-      notify("Left-Click")
-      if (@selecting_tile)
-        @selected_tile = @currently_over
-        @selecting_tile = false
-      else
-        previous_tile = @map.tiles[@currently_over[1]][@currently_over[0]]
-        previous_tile[0] = @selected_tile[0]
-        previous_tile[1] = @selected_tile[1]
-        @map.tiles[@currently_over[1]][@currently_over[0]] = previous_tile
-      end
+      left_mouse_click
     end
     if id == Gosu::MsRight
       notify("Right-Click")
+    end
+  end
+
+  def left_mouse_click
+    if (@selecting_tile)
+      @selected_tile = @currently_over
+      @selecting_tile = false
+    else
+      previous_tile = @map.tiles[@currently_over[1]][@currently_over[0]]
+      previous_tile[0] = @selected_tile[0]
+      previous_tile[1] = @selected_tile[1]
+      @map.tiles[@currently_over[1]][@currently_over[0]] = previous_tile
     end
   end
 
@@ -155,6 +157,8 @@ class GameWindow < Gosu::Window
     ts = @tileset.tile_size
     x = self.mouse_x / ts
     y = self.mouse_y / ts
+    x = @map.width - 1 if x >= @map.width
+    y = @map.height - 1 if y >= @map.height
     @currently_over = [x.floor,y.floor]
   end
 
