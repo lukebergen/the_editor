@@ -40,9 +40,9 @@ class MediaManager
 
   def load_maps
     map_hash = {}
-    map_paths = Dir.glob("#{MAPS_DIR}/*")
+    map_paths = Dir.glob("#{MAPS_DIR}/*.map")
     map_paths.each do |path|
-      map_json = File.read(File.join([path, "data.json"]))
+      map_json = File.read(path)
       map = Map.new(map_json)
       map_hash[map.name] = map
     end

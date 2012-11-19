@@ -11,6 +11,7 @@ class GameWindow < Gosu::Window
     super 1280, 800, false
     @text = nil
     @timer = 0
+    @selecting_tile = false
     @dialog_font = Gosu::Font.new(self, Gosu::default_font_name, 20)
     @mouse_img = Gosu::Image.new(self, "#{APPLICATION_DIR}/media/system/mouse.png")
     if (height)
@@ -28,7 +29,7 @@ class GameWindow < Gosu::Window
         @map.tiles << arr
       end
     else
-      json = File.read(File.join([".", name, "data.json"]))
+      json = File.read("#{name}.map")
       @map = Map.new(json)
     end
     unless tileset_name
@@ -45,17 +46,13 @@ class GameWindow < Gosu::Window
   end
 
   def draw
-    set_background
     draw_mouse
-    draw_selected_tile
+    draw_selected_tile unless @selecting_tile
 
-    ts = @tileset.tile_size
-    @map.tiles.each_with_index do |row, y|
-      row.each_with_index do |data_arr, x|
-        next if data_arr.empty?
-        img = @tileset.tiles[data_arr[0]][data_arr[1]]
-        img.draw(x*ts, y*ts, 100)
-      end
+    if (@selecting_tile)
+      draw_tile_selection
+    else
+      draw_map
     end
 
     if @text
@@ -68,9 +65,34 @@ class GameWindow < Gosu::Window
     end
   end
 
+  def draw_map
+    set_background
+    ts = @tileset.tile_size
+    @map.tiles.each_with_index do |row, y|
+      row.each_with_index do |data_arr, x|
+        next if data_arr.empty?
+        img = @tileset.tiles[data_arr[0]][data_arr[1]]
+        img.draw(x*ts, y*ts, 200)
+      end
+    end
+  end
+
+  def draw_tile_selection
+    ts = @tileset.tile_size
+    @tileset.tiles.each_with_index do |row, y|
+      row.each_with_index do |img, x|
+        img.draw(x*ts, y*ts, 200)
+      end
+    end
+  end
+
   def button_down(id)
     if id == Gosu::KbEscape
-      close
+      if (@selecting_tile)
+        @selecting_tile = false
+      else
+        close
+      end
     end
     if id == Gosu::KbD
       do_debugger
@@ -78,13 +100,11 @@ class GameWindow < Gosu::Window
     if id == Gosu::KbS
       notify("Saving")
       json = @map.to_json
-      unless File.exists?("./#{@map.name}")
-        Dir.mkdir("./#{@map.name}")
-      end
-      File.open("./#{@map.name}/data.json", 'w') {|f| f.write(json)}
+      File.open("./#{@map.name}.map", 'w') {|f| f.write(json)}
     end
     if id == Gosu::KbT
       notify("Selecting Tile")
+      @selecting_tile = true
     end
     if id == Gosu::KbO
       notify("Selecting Object")
@@ -94,10 +114,15 @@ class GameWindow < Gosu::Window
     end
     if id == Gosu::MsLeft
       notify("Left-Click")
-      previous_tile = @map.tiles[@currently_over[1]][@currently_over[0]]
-      previous_tile[0] = @selected_tile[0]
-      previous_tile[1] = @selected_tile[1]
-      @map.tiles[@currently_over[1]][@currently_over[0]] = previous_tile
+      if (@selecting_tile)
+        @selected_tile = @currently_over
+        @selecting_tile = false
+      else
+        previous_tile = @map.tiles[@currently_over[1]][@currently_over[0]]
+        previous_tile[0] = @selected_tile[0]
+        previous_tile[1] = @selected_tile[1]
+        @map.tiles[@currently_over[1]][@currently_over[0]] = previous_tile
+      end
     end
     if id == Gosu::MsRight
       notify("Right-Click")
@@ -123,7 +148,7 @@ class GameWindow < Gosu::Window
     @selected_tile[1]
     ts = @tileset.tile_size
     img = @tileset.tiles[@selected_tile[0]][@selected_tile[1]]
-    img.draw(@currently_over[0]*ts, @currently_over[1]*ts, 100)
+    img.draw(@currently_over[0]*ts, @currently_over[1]*ts, 1000)
   end
 
   def set_currently_over
