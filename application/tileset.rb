@@ -1,6 +1,6 @@
 class Tileset
 
-  attr_accessor :name, :tile_size, :tiles
+  attr_accessor :name, :tile_size, :tiles, :objects
 
   def initialize(window, path)
     json = File.read(File.join([path, "data.json"]))
@@ -13,5 +13,6 @@ class Tileset
     @name = data["name"]
     @tile_size = data["tile_size"]
     @tiles = arr
+    @objects = data["objects"]
   end
 end
