@@ -14,7 +14,7 @@ class Renderer
   def paint(game)
     set_background
 
-    @mouse_img.draw(@window.mouse_x, @window.mouse_y, Constants::Z_POSITIONS[:mouse])
+    #@mouse_img.draw(@window.mouse_x, @window.mouse_y, Constants::Z_POSITIONS[:mouse])
 
     render_map(game.current_map)
 

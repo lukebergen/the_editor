@@ -42,12 +42,16 @@ class GameWindow < Gosu::Window
     @currently_over = [0,0]
   end
 
+  def needs_cursor?
+    true
+  end
+
   def update
     set_currently_over unless @selecting_object
   end
 
   def draw
-    draw_mouse
+    #draw_mouse
 
     if (@selecting_tile)
       draw_tile_selection

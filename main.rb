@@ -34,6 +34,10 @@ class GameWindow < Gosu::Window
     @renderer.draw_text(@fps)
   end
 
+  def needs_cursor?
+    true
+  end
+
   def do_debugger
     debugger
     noop = nil
