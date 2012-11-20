@@ -29,7 +29,7 @@ class GameWindow < Gosu::Window
         @map.tiles << arr
       end
     else
-      json = File.read("#{name}.map")
+      json = File.read("#{name}")
       @map = Map.new(json)
     end
     unless tileset_name
@@ -134,7 +134,7 @@ class GameWindow < Gosu::Window
     if id == Gosu::KbS
       notify("Saving")
       json = @map.to_json
-      File.open("./#{@map.name}.map", 'w') {|f| f.write(json)}
+      File.open("./#{@map.name}", 'w') {|f| f.write(json)}
     end
     if id == Gosu::KbT
       @selecting_tile = true
