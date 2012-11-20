@@ -1,0 +1,21 @@
+{
+  "frames":
+  [
+    {
+      "file":"1.png",
+      "timer":15
+    },
+    {
+      "file":"2.png",
+      "timer":15
+    },
+    {
+      "file":"3.png",
+      "timer":15
+    },
+    {
+      "file":"4.png",
+      "timer":15
+    }
+  ]
+}
