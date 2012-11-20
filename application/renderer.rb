@@ -50,11 +50,11 @@ class Renderer
       row_arr.each_with_index do |tile_data, col|
         # first paint the bottom tile
         img = tileset.tiles[tile_data[0]][tile_data[1]]
-        img.draw(col * mul, row * mul, Constants::Z_POSITIONS[:bottom_tile])
+        img.draw(col * mul, row * mul, Constants::Z_POSITIONS[:top_tile])
         
         # then paint the top tile
         img = tileset.tiles[tile_data[2]][tile_data[3]]
-        img.draw(col * mul, row * mul, Constants::Z_POSITIONS[:top_tile])
+        img.draw(col * mul, row * mul, Constants::Z_POSITIONS[:bottom_tile])
 
         # figure out blocking later
       end
