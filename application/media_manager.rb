@@ -2,6 +2,7 @@ class MediaManager
   MEDIA_DIR = "#{APPLICATION_DIR}/media"
   TILESETS_DIR = "#{APPLICATION_DIR}/tilesets"
   MAPS_DIR = "#{APPLICATION_DIR}/maps"
+  ANIMATION_DIR = "#{MEDIA_DIR}/animations"
 
   attr_accessor :images, :animations, :tilesets, :maps
 
@@ -25,7 +26,13 @@ class MediaManager
   end
 
   def load_animations
-    {}
+    animation_hash = {}
+    animation_paths = Dir.glob("#{ANIMATION_DIR}/*")
+    animation_paths.each do |path|
+      key = File.basename(path)
+      animation_hash[key] = Animation.new(@window, path)
+    end
+    animation_hash
   end
 
   def load_tilesets

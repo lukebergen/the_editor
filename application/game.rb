@@ -20,20 +20,15 @@ class Game
   end
 
   def load_game_objects
-    go = GameObject.new
-    go.add_module("Displayable")
-    go.attributes[:current_image] = "chair.png"
-    go.attributes[:x] = 20
-    go.attributes[:y] = 20
-
     objects = []
     paths = Dir.glob(File.join([APPLICATION_DIR, 'objects', '*']))
     paths.each do |path|
       klass = Utils.constantize(File.basename(path))
       obj = klass.new
-      yaml = File.read(File.join([path, 'data.yml']))
-      hash = YAML::load(yaml)
-      obj.attributes = go.attributes.merge(hash)
+      json = File.read(File.join([path, 'data.json']))
+      hash = JSON::load(json).inject({}) {|h, (k,v)| h[k.to_sym] = v; h}
+      obj.attributes = obj.attributes.merge(hash)
+      obj.post_json_init if obj.respond_to?(:post_json_init)
       objects << obj
     end
 

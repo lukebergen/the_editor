@@ -25,7 +25,13 @@ class Renderer
         z = go.attributes[:z]
         height = go.attributes[:height]
         width = go.attributes[:width]
-        current_image = @media_manager.images[go.attributes[:current_image]]
+        img_src = go.attributes[:current_image]
+        if (img_src.include?(':'))
+          split = img_src.split(':')
+          current_image = @media_manager.animations[split[0]].current_image(split[1])
+        else
+          current_image = @media_manager.images[go.attributes[:current_image]]
+        end
         if (x && y && current_image)
           fx = fy = 1
           z ||= Constants::Z_POSITIONS[:default_game_object]
@@ -39,6 +45,12 @@ class Renderer
 
     if @s
       @dialog_font.draw(@s, 0, 0, 0, 1, 1, Gosu::Color::BLACK)
+    end
+  end
+
+  def tick
+    @media_manager.animations.values.each do |ani|
+      ani.tick
     end
   end
 

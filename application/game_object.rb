@@ -12,11 +12,19 @@ class GameObject
   end
 
   def add_attribute(name)
-    @attributes[name] = nil
+    @attributes[name.to_sym] = nil
   end
 
   def add_attributes(*names)
     names.flatten.each {|name| add_attribute(name) }
+  end
+
+  def set_attribute(key, value)
+    @attributes[key.to_sym] = value
+  end
+
+  def get_attribute(key)
+    @attributes[key.to_sym]
   end
 
   def add_module(mod_name)
