@@ -61,7 +61,9 @@ class Renderer
 
   def render_map(map_name)
     # we have to speed this up.
-    unless (@pre_rendered_maps[map_name])
+    stich = true
+
+    if (!@pre_rendered_maps[map_name] || !stich)
       map = media_manager.maps[map_name]
       tileset = media_manager.tilesets[map.tileset]
       mul = tileset.tile_size
@@ -75,21 +77,29 @@ class Renderer
 
           # first paint the bottom tile
           img = tileset.tiles[tile_data[2]][tile_data[3]]
-          #img.draw(col * mul, row * mul, Constants::Z_POSITIONS[:bottom_tile])
-          full_img[1].splice(img, col * mul, row * mul)
+          if (stich)
+            full_img[1].splice(img, col * mul, row * mul)
+          else
+            img.draw(col * mul, row * mul, Constants::Z_POSITIONS[:bottom_tile])
+          end
           
           # then paint the top tile
           img = tileset.tiles[tile_data[0]][tile_data[1]]
-          #img.draw(col * mul, row * mul, Constants::Z_POSITIONS[:top_tile])
-          full_img[0].splice(img, col * mul, row * mul)
+          if (stich)
+            full_img[0].splice(img, col * mul, row * mul)
+          else
+            img.draw(col * mul, row * mul, Constants::Z_POSITIONS[:top_tile])
+          end
 
           # figure out blocking later
         end
       end
       @pre_rendered_maps[map_name] = full_img
     end
-    @pre_rendered_maps[map_name][1].draw(0, 0, Constants::Z_POSITIONS[:bottom_tile])
-    @pre_rendered_maps[map_name][0].draw(0, 0, Constants::Z_POSITIONS[:top_tile])
+    if (stich)
+      @pre_rendered_maps[map_name][1].draw(0, 0, Constants::Z_POSITIONS[:bottom_tile])
+      @pre_rendered_maps[map_name][0].draw(0, 0, Constants::Z_POSITIONS[:top_tile])
+    end
     
   end
 
