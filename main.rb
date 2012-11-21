@@ -2,6 +2,7 @@ APPLICATION_DIR = "./application"
 require 'gosu'
 require 'debugger'
 require 'json'
+require 'texplay'
 require File.join([APPLICATION_DIR, 'game'])
 require File.join([APPLICATION_DIR, 'media_manager'])
 require File.join([APPLICATION_DIR, 'constants'])

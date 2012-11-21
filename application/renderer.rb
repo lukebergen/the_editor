@@ -9,6 +9,7 @@ class Renderer
     @media_manager = MediaManager.new(@window)
     @dialog_font = Gosu::Font.new(@window, Gosu::default_font_name, 20)
     @mouse_img = Gosu::Image.new(@window, "#{APPLICATION_DIR}/media/system/mouse.png")
+    @pre_rendered_maps = {}
   end
 
   def paint(game)
@@ -18,7 +19,21 @@ class Renderer
 
     render_map(game.current_map)
 
-    game.objects.each do |go|
+    render_game_objects(game.objects)
+
+    if @s
+      @dialog_font.draw(@s, 1100, 750, 1000, 1, 1, Gosu::Color::BLACK)
+    end
+  end
+
+  def tick
+    @media_manager.animations.values.each do |ani|
+      ani.tick
+    end
+  end
+
+  def render_game_objects(objects)
+    objects.each do |go|
       if (go.has_module('Displayable'))
         x = go.attributes[:x]
         y = go.attributes[:y]
@@ -42,35 +57,40 @@ class Renderer
         end
       end
     end
-
-    if @s
-      @dialog_font.draw(@s, 0, 0, 0, 1, 1, Gosu::Color::BLACK)
-    end
-  end
-
-  def tick
-    @media_manager.animations.values.each do |ani|
-      ani.tick
-    end
   end
 
   def render_map(map_name)
-    map = media_manager.maps[map_name]
-    tileset = media_manager.tilesets[map.tileset]
-    mul = tileset.tile_size
-    map.tiles.each_with_index do |row_arr, row|
-      row_arr.each_with_index do |tile_data, col|
-        # first paint the bottom tile
-        img = tileset.tiles[tile_data[0]][tile_data[1]]
-        img.draw(col * mul, row * mul, Constants::Z_POSITIONS[:top_tile])
-        
-        # then paint the top tile
-        img = tileset.tiles[tile_data[2]][tile_data[3]]
-        img.draw(col * mul, row * mul, Constants::Z_POSITIONS[:bottom_tile])
+    # we have to speed this up.
+    unless (@pre_rendered_maps[map_name])
+      map = media_manager.maps[map_name]
+      tileset = media_manager.tilesets[map.tileset]
+      mul = tileset.tile_size
 
-        # figure out blocking later
+      full_img = []
+      full_img[0] = TexPlay.create_blank_image(@window, map.height * mul, map.width * mul)
+      full_img[1] = TexPlay.create_blank_image(@window, map.height * mul, map.width * mul)
+
+      map.tiles.each_with_index do |row_arr, row|
+        row_arr.each_with_index do |tile_data, col|
+
+          # first paint the bottom tile
+          img = tileset.tiles[tile_data[2]][tile_data[3]]
+          #img.draw(col * mul, row * mul, Constants::Z_POSITIONS[:bottom_tile])
+          full_img[1].splice(img, col * mul, row * mul)
+          
+          # then paint the top tile
+          img = tileset.tiles[tile_data[0]][tile_data[1]]
+          #img.draw(col * mul, row * mul, Constants::Z_POSITIONS[:top_tile])
+          full_img[0].splice(img, col * mul, row * mul)
+
+          # figure out blocking later
+        end
       end
+      @pre_rendered_maps[map_name] = full_img
     end
+    @pre_rendered_maps[map_name][1].draw(0, 0, Constants::Z_POSITIONS[:bottom_tile])
+    @pre_rendered_maps[map_name][0].draw(0, 0, Constants::Z_POSITIONS[:top_tile])
+    
   end
 
   def stretch_factor(image, stretch_to_height, stretch_to_width)

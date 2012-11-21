@@ -6,6 +6,6 @@ class Door1 < GameObject
   end
 
   def post_json_init
-    set_animation("player_walk_down")
+    #set_animation("player_walk_down")
   end
 end
