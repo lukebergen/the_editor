@@ -61,9 +61,9 @@ class Renderer
 
   def render_map(map_name)
     # we have to speed this up.
-    stich = true
+    stitch = true
 
-    if (!@pre_rendered_maps[map_name] || !stich)
+    if (!@pre_rendered_maps[map_name] || !stitch)
       map = media_manager.maps[map_name]
       tileset = media_manager.tilesets[map.tileset]
       mul = tileset.tile_size
@@ -77,7 +77,7 @@ class Renderer
 
           # first paint the bottom tile
           img = tileset.tiles[tile_data[2]][tile_data[3]]
-          if (stich)
+          if (stitch)
             full_img[1].splice(img, col * mul, row * mul)
           else
             img.draw(col * mul, row * mul, Constants::Z_POSITIONS[:bottom_tile])
@@ -85,7 +85,7 @@ class Renderer
           
           # then paint the top tile
           img = tileset.tiles[tile_data[0]][tile_data[1]]
-          if (stich)
+          if (stitch)
             full_img[0].splice(img, col * mul, row * mul)
           else
             img.draw(col * mul, row * mul, Constants::Z_POSITIONS[:top_tile])
@@ -96,7 +96,7 @@ class Renderer
       end
       @pre_rendered_maps[map_name] = full_img
     end
-    if (stich)
+    if (stitch)
       @pre_rendered_maps[map_name][1].draw(0, 0, Constants::Z_POSITIONS[:bottom_tile])
       @pre_rendered_maps[map_name][0].draw(0, 0, Constants::Z_POSITIONS[:top_tile])
     end
