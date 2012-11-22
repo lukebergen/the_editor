@@ -1,0 +1,22 @@
+{
+  "repeat": "repeat",
+  "frames":
+  [
+    {
+      "file":"1.png",
+      "timer":5
+    },
+    {
+      "file":"2.png",
+      "timer":5
+    },
+    {
+      "file":"3.png",
+      "timer":5
+    },
+    {
+      "file":"4.png",
+      "timer":5
+    }
+  ]
+}

@@ -3,25 +3,17 @@ class Animation
 
   attr_accessor :frames, :repeat
 
-  @@instance = nil
-
   def initialize(win, path)
-    if @@instance
-      return @@instance
-    else
-      @@instance = self
-      @frames = []
-      hash = JSON::load(File.read(File.join([path, 'data.json'])))
-      hash['frames'].each do |frame|
-        h = {}
-        h[:image] = Gosu::Image.new(win, File.join([path, frame['file']]))
-        h[:timer] = frame['timer'].to_i
-        @frames << h
-      end
-      @repeat = hash['repeat']
-      @instances = {}
+    @frames = []
+    hash = JSON::load(File.read(File.join([path, 'data.json'])))
+    hash['frames'].each do |frame|
+      h = {}
+      h[:image] = Gosu::Image.new(win, File.join([path, frame['file']]))
+      h[:timer] = frame['timer'].to_i
+      @frames << h
     end
-    @@instance
+    @repeat = hash['repeat']
+    @instances = {}
   end
 
   def create(key)
