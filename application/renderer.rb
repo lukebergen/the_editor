@@ -10,14 +10,18 @@ class Renderer
     @dialog_font = Gosu::Font.new(@window, Gosu::default_font_name, 20)
     @mouse_img = Gosu::Image.new(@window, "#{APPLICATION_DIR}/media/system/mouse.png")
     @pre_rendered_maps = {}
+    @world = [[],[],[]]
+    @current_map = nil
   end
 
   def paint(game)
     set_background
 
     #@mouse_img.draw(@window.mouse_x, @window.mouse_y, Constants::Z_POSITIONS[:mouse])
-
-    render_map(game.current_map)
+    if (@current_map != game.current_map)
+      build_world(game.current_map)
+    end
+    render_world
 
     render_game_objects(game.objects)
 
@@ -59,33 +63,70 @@ class Renderer
     end
   end
 
-  def render_map(map_name)
-    # we have to speed this up.
-    if (!@pre_rendered_maps[map_name])
-      map = media_manager.maps[map_name]
-      tileset = media_manager.tilesets[map.tileset]
-      mul = tileset.tile_size
-
-      @pre_rendered_maps[map_name] = []
-      @pre_rendered_maps[map_name][0] = @window.record(map.width*mul, map.height*mul) do
-        map.tiles.each_with_index do |row_arr, row|
-          row_arr.each_with_index do |tile_data, col|
-            img = tileset.tiles[tile_data[0]][tile_data[1]]
-            img.draw(col * mul, row * mul, 0)
-          end
-        end
+  def build_world(map_name)
+    @current_map = map_name
+    map = media_manager.maps[map_name]
+    @world[1][1] = build_map(map_name)
+    map.neighbors.each do |key, name|
+      case key
+      when 'top_left'
+        @world[0][0] = build_map(name)
+      when 'top'
+        @world[0][1] = build_map(name)
+      when 'topright'
+        @world[0][2] = build_map(name)
+      when 'left'
+        @world[1][0] = build_map(name)
+      when 'right'
+        @world[1][2] = build_map(name)
+      when 'bottomleft'
+        @world[2][0] = build_map(name)
+      when 'bottom'
+        @world[2][1] = build_map(name)
+      when 'bottomright'
+        @world[2][2] = build_map(name)
       end
-      @pre_rendered_maps[map_name][1] = @window.record(map.width*mul, map.height*mul) do
-        map.tiles.each_with_index do |row_arr, row|
-          row_arr.each_with_index do |tile_data, col|
-            img = tileset.tiles[tile_data[2]][tile_data[3]]
-            img.draw(col * mul, row * mul, 0)
-          end
+    end
+  end
+
+  def build_map(name)
+    map = media_manager.maps[name]
+    tileset = media_manager.tilesets[map.tileset]
+    mul = tileset.tile_size
+
+    result = []
+    result[0] = @window.record(map.width*mul, map.height*mul) do
+      map.tiles.each_with_index do |row_arr, row|
+        row_arr.each_with_index do |tile_data, col|
+          img = tileset.tiles[tile_data[0]][tile_data[1]]
+          img.draw(col * mul, row * mul, 0)
         end
       end
     end
-    @pre_rendered_maps[map_name][1].draw(0, 0, Constants::Z_POSITIONS[:bottom_tile])
-    @pre_rendered_maps[map_name][0].draw(0, 0, Constants::Z_POSITIONS[:top_tile])
+    result[1] = @window.record(map.width*mul, map.height*mul) do
+      map.tiles.each_with_index do |row_arr, row|
+        row_arr.each_with_index do |tile_data, col|
+          img = tileset.tiles[tile_data[2]][tile_data[3]]
+          img.draw(col * mul, row * mul, 0)
+        end
+      end
+    end
+    result
+  end
+
+  def render_world
+    (0..2).each do |row|
+      (0..2).each do |col|
+        next if @world[row][col].nil? || @world[row][col].empty?
+        bottom_img = @world[row][col][1]
+        top_img = @world[row][col][0]
+        
+        x = (col - 1) * top_img.width
+        y = (row - 1) * top_img.height
+        bottom_img.draw(x, y, Constants::Z_POSITIONS[:bottom_tile])
+        top_img.draw(x, y, Constants::Z_POSITIONS[:top_tile])
+      end
+    end
   end
 
   def stretch_factor(image, stretch_to_height, stretch_to_width)
