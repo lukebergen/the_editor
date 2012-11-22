@@ -14,4 +14,13 @@ module Displayable
     self.set_attribute(:current_image, "#{ani_name}:#{self.object_id}")
   end
 
+  def current_animation
+    ci = self.get_attribute(:current_image)
+    if !ci.include?(':')
+      nil
+    else
+      ci.split(':')[0]
+    end
+  end
+
 end
