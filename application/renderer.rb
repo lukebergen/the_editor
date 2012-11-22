@@ -61,46 +61,31 @@ class Renderer
 
   def render_map(map_name)
     # we have to speed this up.
-    stitch = true
-
-    if (!@pre_rendered_maps[map_name] || !stitch)
+    if (!@pre_rendered_maps[map_name])
       map = media_manager.maps[map_name]
       tileset = media_manager.tilesets[map.tileset]
       mul = tileset.tile_size
 
-      full_img = []
-      full_img[0] = TexPlay.create_blank_image(@window, map.height * mul, map.width * mul)
-      full_img[1] = TexPlay.create_blank_image(@window, map.height * mul, map.width * mul)
-
-      map.tiles.each_with_index do |row_arr, row|
-        row_arr.each_with_index do |tile_data, col|
-
-          # first paint the bottom tile
-          img = tileset.tiles[tile_data[2]][tile_data[3]]
-          if (stitch)
-            full_img[1].splice(img, col * mul, row * mul)
-          else
-            img.draw(col * mul, row * mul, Constants::Z_POSITIONS[:bottom_tile])
+      @pre_rendered_maps[map_name] = []
+      @pre_rendered_maps[map_name][0] = @window.record(map.width*mul, map.height*mul) do
+        map.tiles.each_with_index do |row_arr, row|
+          row_arr.each_with_index do |tile_data, col|
+            img = tileset.tiles[tile_data[0]][tile_data[1]]
+            img.draw(col * mul, row * mul, 0)
           end
-          
-          # then paint the top tile
-          img = tileset.tiles[tile_data[0]][tile_data[1]]
-          if (stitch)
-            full_img[0].splice(img, col * mul, row * mul)
-          else
-            img.draw(col * mul, row * mul, Constants::Z_POSITIONS[:top_tile])
-          end
-
-          # figure out blocking later
         end
       end
-      @pre_rendered_maps[map_name] = full_img
+      @pre_rendered_maps[map_name][1] = @window.record(map.width*mul, map.height*mul) do
+        map.tiles.each_with_index do |row_arr, row|
+          row_arr.each_with_index do |tile_data, col|
+            img = tileset.tiles[tile_data[2]][tile_data[3]]
+            img.draw(col * mul, row * mul, 0)
+          end
+        end
+      end
     end
-    if (stitch)
-      @pre_rendered_maps[map_name][1].draw(0, 0, Constants::Z_POSITIONS[:bottom_tile])
-      @pre_rendered_maps[map_name][0].draw(0, 0, Constants::Z_POSITIONS[:top_tile])
-    end
-    
+    @pre_rendered_maps[map_name][1].draw(0, 0, Constants::Z_POSITIONS[:bottom_tile])
+    @pre_rendered_maps[map_name][0].draw(0, 0, Constants::Z_POSITIONS[:top_tile])
   end
 
   def stretch_factor(image, stretch_to_height, stretch_to_width)
