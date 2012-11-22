@@ -1,7 +1,6 @@
 APPLICATION_DIR = "./application"
 require 'gosu'
 require 'json'
-require 'debugger'
 require File.join([APPLICATION_DIR, "tileset.rb"])
 require File.join([APPLICATION_DIR, "map.rb"])
 
@@ -13,7 +12,6 @@ class GameWindow < Gosu::Window
     @timer = 0
     @selecting_tile = false
     @dialog_font = Gosu::Font.new(self, Gosu::default_font_name, 20)
-    @mouse_img = Gosu::Image.new(self, "#{APPLICATION_DIR}/media/system/mouse.png")
     if (height)
       @map = Map.new
       @map.name = name
@@ -29,7 +27,7 @@ class GameWindow < Gosu::Window
         @map.tiles << arr
       end
     else
-      json = File.read("#{name}")
+      json = File.read("#{name}.map")
       @map = Map.new(json)
     end
     unless tileset_name
@@ -132,13 +130,10 @@ class GameWindow < Gosu::Window
         close
       end
     end
-    if id == Gosu::KbD
-      do_debugger
-    end
     if id == Gosu::KbS
       notify("Saving")
       json = @map.to_json
-      File.open("./#{@map.name}", 'w') {|f| f.write(json)}
+      File.open("./#{@map.name}.map", 'w') {|f| f.write(json)}
     end
     if id == Gosu::KbT
       @selecting_tile = true
@@ -196,15 +191,6 @@ class GameWindow < Gosu::Window
   def notify(text)
     @text = text
     @timer = 60
-  end
-
-  def do_debugger
-    debugger
-    noop = nil
-  end
-
-  def draw_mouse
-    @mouse_img.draw(self.mouse_x, self.mouse_y, 10000)
   end
 
   def draw_selected_tile
