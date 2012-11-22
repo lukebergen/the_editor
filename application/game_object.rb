@@ -2,11 +2,13 @@ MODULES_DIR = File.join([APPLICATION_DIR, 'go_modules'])
 
 class GameObject
 
-  attr_accessor :modules, :attributes
+  attr_accessor :modules, :attributes, :listeners
   attr_reader :code_string
 
-  def initialize
+  def initialize(game)
+    @game = game
     @attributes = {}
+    @listeners = {}
     @modules = []
     @code_string = File.read(__FILE__).gsub(/^[ ]*/, '')
   end

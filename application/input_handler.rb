@@ -8,6 +8,11 @@ module InputHandler
       if id == Gosu::KbD
         do_debugger
       end
+      @game.emit(:key_down, id)
+    end
+
+    def button_up(id)
+      @game.emit(:key_up, id)
     end
 
   end
