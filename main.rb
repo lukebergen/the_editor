@@ -28,7 +28,7 @@ class GameWindow < Gosu::Window
 
   def update
     @game.tick
-    @renderer.tick
+    @renderer.tick(@game)
     @fps = "fps: #{Gosu::fps}"
   end
 

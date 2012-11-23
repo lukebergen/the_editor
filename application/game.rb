@@ -35,6 +35,10 @@ class Game
     return objects
   end
 
+  def change_map(map_name)
+    @current_map = map_name
+  end
+
   def emit(message, *args, &block)
     @objects.each do |obj|
       if (obj.listeners.has_key?(message))
@@ -45,6 +49,10 @@ class Game
   end
 
   def tick
+    tick_objects
+  end
+
+  def tick_objects
     @objects.each do |obj|
       if (obj.respond_to?(:tick))
         obj.tick

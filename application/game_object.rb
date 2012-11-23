@@ -9,6 +9,7 @@ class GameObject
     @game = game
     @attributes = {}
     @listeners = {}
+    @tickers = []
     @modules = []
     @code_string = File.read(__FILE__).gsub(/^[ ]*/, '')
   end
@@ -31,8 +32,18 @@ class GameObject
     @attributes[key.to_sym] = value
   end
 
+  def set_attributes(hash)
+    hash.each do |k, v|
+      set_attribute(k, v)
+    end
+  end
+
   def get_attribute(key)
     @attributes[key.to_sym]
+  end
+
+  def has_attribute?(key)
+    @attributes.has_key?(key)
   end
 
   def add_module(mod_name)

@@ -12,12 +12,12 @@ class Renderer
     @pre_rendered_maps = {}
     @world = [[],[],[]]
     @current_map = nil
+    @focus = [@window.width / 2.0, @window.height / 2.0]
   end
 
   def paint(game)
     set_background
 
-    #@mouse_img.draw(@window.mouse_x, @window.mouse_y, Constants::Z_POSITIONS[:mouse])
     if (@current_map != game.current_map)
       build_world(game.current_map)
     end
@@ -30,37 +30,11 @@ class Renderer
     end
   end
 
-  def tick
+  def tick(game)
     @media_manager.animations.values.each do |ani|
       ani.tick
     end
-  end
-
-  def render_game_objects(objects)
-    objects.each do |go|
-      if (go.has_module('Displayable'))
-        x = go.attributes[:x]
-        y = go.attributes[:y]
-        z = go.attributes[:z]
-        height = go.attributes[:height]
-        width = go.attributes[:width]
-        img_src = go.attributes[:current_image]
-        if (img_src.include?(':'))
-          split = img_src.split(':')
-          current_image = @media_manager.animations[split[0]].current_image(split[1])
-        else
-          current_image = @media_manager.images[go.attributes[:current_image]]
-        end
-        if (x && y && current_image)
-          fx = fy = 1
-          z ||= Constants::Z_POSITIONS[:default_game_object]
-          if (height || width)
-            fx, fy = stretch_factor(current_image, height, width)
-          end
-          current_image.draw(x, y, z, fx, fy)
-        end
-      end
-    end
+    update_focus(game)
   end
 
   def build_world(map_name)
@@ -114,6 +88,45 @@ class Renderer
     result
   end
 
+  def update_focus(game)
+
+    focus_object = game.objects.select do |obj|
+      obj.has_attribute?(:has_focus) && obj.get_attribute(:has_focus)
+    end.first
+
+    map = @world[1][1]
+    map = map.first if map
+
+    return unless map && focus_object
+
+    center_x = @window.width / 2.0
+    center_y = @window.height / 2.0
+
+    has_left     = !(@world[0][0] || @world[1][0] || @world[2][0]).nil?
+    has_top      = !(@world[0][0] || @world[0][1] || @world[0][2]).nil?
+    has_right    = !(@world[0][2] || @world[1][2] || @world[2][2]).nil?
+    has_bottom   = !(@world[2][0] || @world[2][1] || @world[2][2]).nil?
+
+    # set focus assuming there's a neighbor, then reset it to center if no neighbor
+    fx = focus_object.get_attribute(:x)
+    fy = focus_object.get_attribute(:y)
+    @focus[0] = fx #center_x - (fx - center_x)
+    @focus[1] = fy #center_y - (fy - center_y)
+
+    if (fx < center_x && !has_left)
+      @focus[0] = center_x
+    end
+    if (fx > (map.width - center_x) && !has_right)
+      @focus[0] = (map.width - center_x)
+    end
+    if (fy < center_y && !has_top)
+      @focus[1] = center_y
+    end
+    if (fy > (map.width - center_y) && !has_bottom)
+      @focus[1] = (map.width - center_y)
+    end
+  end
+
   def render_world
     (0..2).each do |row|
       (0..2).each do |col|
@@ -121,10 +134,37 @@ class Renderer
         bottom_img = @world[row][col][1]
         top_img = @world[row][col][0]
         
-        x = (col - 1) * top_img.width
-        y = (row - 1) * top_img.height
+        x = (col - 1) * top_img.width - (@focus[0] - @window.width / 2.0)
+        y = (row - 1) * top_img.height - (@focus[1] - @window.height / 2.0)
         bottom_img.draw(x, y, Constants::Z_POSITIONS[:bottom_tile])
         top_img.draw(x, y, Constants::Z_POSITIONS[:top_tile])
+      end
+    end
+  end
+
+  def render_game_objects(objects)
+    objects.each do |go|
+      if (go.has_module('Displayable'))
+        x = go.attributes[:x] - (@focus[0] - (@window.width / 2.0))
+        y = go.attributes[:y] - (@focus[1] - (@window.height / 2.0))
+        z = go.attributes[:z]
+        height = go.attributes[:height]
+        width = go.attributes[:width]
+        img_src = go.attributes[:current_image]
+        if (img_src.include?(':'))
+          split = img_src.split(':')
+          current_image = @media_manager.animations[split[0]].current_image(split[1])
+        else
+          current_image = @media_manager.images[go.attributes[:current_image]]
+        end
+        if (x && y && current_image)
+          fx = fy = 1
+          z ||= Constants::Z_POSITIONS[:default_game_object]
+          if (height || width)
+            fx, fy = stretch_factor(current_image, height, width)
+          end
+          current_image.draw(x, y, z, fx, fy)
+        end
       end
     end
   end
