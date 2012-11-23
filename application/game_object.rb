@@ -13,12 +13,18 @@ class GameObject
     @code_string = File.read(__FILE__).gsub(/^[ ]*/, '')
   end
 
-  def add_attribute(name)
-    @attributes[name.to_sym] = nil
+  def add_attribute(name, value=nil)
+    @attributes[name.to_sym] = value
   end
 
   def add_attributes(*names)
-    names.flatten.each {|name| add_attribute(name) }
+    if (names.first && names.first.is_a?(Hash))
+      names.first.each do |k, v|
+        add_attribute(k.to_sym, v)
+      end
+    else
+      names.flatten.each {|name| add_attribute(name.to_sym) }
+    end
   end
 
   def set_attribute(key, value)

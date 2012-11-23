@@ -5,10 +5,11 @@ class Player < GameObject
     add_module("Touchable")
     add_module("Interactive")
 
-    add_attributes(:dx, :dy, :speed)
-    set_attribute(:speed, 4.0)
-    set_attribute(:dx, 0)
-    set_attribute(:dy, 0)
+    add_attribute(:has_focus, true)
+
+    @speed = 4.0
+    @dx = 0
+    @dy = 0
 
     listen_for(:key_down, :key_down)
     listen_for(:key_up, :key_up)
@@ -26,19 +27,19 @@ class Player < GameObject
     when Gosu::KbUp
       @dirs_moving << :up
       direction_ani
-      set_attribute(:dy, get_attribute(:dy) - 1)
+      @dy -= 1
     when Gosu::KbDown
       @dirs_moving << :down
       direction_ani
-      set_attribute(:dy, get_attribute(:dy) + 1)
+      @dy += 1
     when Gosu::KbLeft
       @dirs_moving << :left
       direction_ani
-      set_attribute(:dx, get_attribute(:dx) - 1)
+      @dx -= 1
     when Gosu::KbRight
       @dirs_moving << :right
       direction_ani
-      set_attribute(:dx, get_attribute(:dx) + 1)
+      @dx += 1
     end
   end
 
@@ -48,22 +49,22 @@ class Player < GameObject
       @last_dir = :up
       @dirs_moving.delete(:up)
       direction_ani
-      set_attribute(:dy, get_attribute(:dy) + 1)
+      @dy += 1
     when Gosu::KbDown
       @last_dir = :down
       @dirs_moving.delete(:down)
       direction_ani
-      set_attribute(:dy, get_attribute(:dy) - 1)
+      @dy -= 1
     when Gosu::KbLeft
       @last_dir = :left
       @dirs_moving.delete(:left)
       direction_ani
-      set_attribute(:dx, get_attribute(:dx) + 1)
+      @dx += 1
     when Gosu::KbRight
       @last_dir = :right
       @dirs_moving.delete(:right)
       direction_ani
-      set_attribute(:dx, get_attribute(:dx) - 1)
+      @dx -= 1
     end
   end
 
@@ -80,8 +81,8 @@ class Player < GameObject
   def tick
     old_x = get_attribute(:x)
     old_y = get_attribute(:y)
-    set_attribute(:x, old_x + (get_attribute(:dx) * (get_attribute(:speed) - (@dirs_moving.count / 1.3))))
-    set_attribute(:y, old_y + (get_attribute(:dy) * (get_attribute(:speed) - (@dirs_moving.count / 1.3))))
+    set_attribute(:x, old_x + (@dx * (@speed - (@dirs_moving.count / 1.3))))
+    set_attribute(:y, old_y + (@dy * (@speed - (@dirs_moving.count / 1.3))))
   end
 
 end
