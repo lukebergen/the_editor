@@ -12,11 +12,12 @@ end
 
 class Game
 
-  attr_accessor :objects, :current_map
+  attr_accessor :objects, :current_map, :maps
 
-  def initialize
+  def initialize(maps)
     @objects = load_game_objects
     @current_map = "dev_area"
+    @maps = maps
   end
 
   def load_game_objects
@@ -26,13 +27,68 @@ class Game
       klass = Utils.constantize(File.basename(path))
       obj = klass.new(self)
       json = File.read(File.join([path, 'data.json']))
-      hash = JSON::load(json).inject({}) {|h, (k,v)| h[k.to_sym] = v; h}
+      hash = Utils.symbolize_keys(JSON::load(json))
       obj.attributes = obj.attributes.merge(hash)
       obj.post_json_init if obj.respond_to?(:post_json_init)
       objects << obj
     end
 
     return objects
+  end
+
+  def edge_hit(object, dir, options)
+    options = {on_world_edge: :destroy}.merge(options)
+    map = @maps[@current_map]
+    case dir
+    when :left
+      if (map.neighbors[:left])
+        object.set_attribute(:x, Constants::MAP_WIDTH) # - object.get_attribute(:width))
+        object.set_attribute(:current_map, map.neighbors[:left])
+        change_map(map.neighbors[:left])
+      else
+        if (options[:on_world_edge] == :stop)
+          object.set_attribute(:x, 0)
+        elsif (options[:on_world_edge] == :destroy)
+          @objects.delete(object)
+        end
+      end
+    when :top
+      if (map.neighbors[:top])
+        object.set_attribute(:y, Constants::MAP_HEIGHT) # - object.get_attribute(:height))
+        object.set_attribute(:current_map, map.neighbors[:top])
+        change_map(map.neighbors[:top])
+      else
+        if (options[:on_world_edge] == :stop)
+          object.set_attribute(:y, 0)
+        elsif (options[:on_world_edge] == :destroy)
+          @objects.delete(object)
+        end
+      end
+    when :right
+      if (map.neighbors[:right])
+        object.set_attribute(:x, 0)
+        object.set_attribute(:current_map, map.neighbors[:right])
+        change_map(map.neighbors[:right])
+      else
+        if (options[:on_world_edge] == :stop)
+          object.set_attribute(:x, Constants::MAP_WIDTH) # - object.get_attribute(:width))
+        elsif (options[:on_world_edge] == :destroy)
+          @objects.delete(object)
+        end
+      end
+    when :bottom
+      if (map.neighbors[:bottom])
+        object.set_attribute(:y, 0)
+        object.set_attribute(:current_map, map.neighbors[:bottom])
+        change_map(map.neighbors[:bottom])
+      else
+        if (options[:on_world_edge] == :stop)
+          object.set_attribute(:y, Constants::MAP_HEIGHT) # - object.get_attribute(:height))
+        elsif (options[:on_world_edge] == :destroy)
+          @objects.delete(object)
+        end
+      end
+    end
   end
 
   def change_map(map_name)

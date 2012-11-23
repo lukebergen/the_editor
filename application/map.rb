@@ -11,7 +11,7 @@ class Map
       @width = map_hash["width"]
       @tiles = map_hash["tiles"]
       @tileset = map_hash["tileset"]
-      @neighbors = map_hash["neighbors"]
+      @neighbors = Utils.symbolize_keys(map_hash["neighbors"])
     end
   end
 

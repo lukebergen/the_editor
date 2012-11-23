@@ -38,26 +38,27 @@ class Renderer
   end
 
   def build_world(map_name)
+    @world = [[],[],[]]
     @current_map = map_name
     map = media_manager.maps[map_name]
     @world[1][1] = build_map(map_name)
     map.neighbors.each do |key, name|
       case key
-      when 'top_left'
+      when :top_left
         @world[0][0] = build_map(name)
-      when 'top'
+      when :top
         @world[0][1] = build_map(name)
-      when 'topright'
+      when :topright
         @world[0][2] = build_map(name)
-      when 'left'
+      when :left
         @world[1][0] = build_map(name)
-      when 'right'
+      when :right
         @world[1][2] = build_map(name)
-      when 'bottomleft'
+      when :bottomleft
         @world[2][0] = build_map(name)
-      when 'bottom'
+      when :bottom
         @world[2][1] = build_map(name)
-      when 'bottomright'
+      when :bottomright
         @world[2][2] = build_map(name)
       end
     end
@@ -68,8 +69,8 @@ class Renderer
     tileset = media_manager.tilesets[map.tileset]
     mul = tileset.tile_size
 
-    result = []
-    result[0] = @window.record(map.width*mul, map.height*mul) do
+    result = {}
+    result[:top_image] = @window.record(map.width*mul, map.height*mul) do
       map.tiles.each_with_index do |row_arr, row|
         row_arr.each_with_index do |tile_data, col|
           img = tileset.tiles[tile_data[0]][tile_data[1]]
@@ -77,7 +78,7 @@ class Renderer
         end
       end
     end
-    result[1] = @window.record(map.width*mul, map.height*mul) do
+    result[:bottom_image] = @window.record(map.width*mul, map.height*mul) do
       map.tiles.each_with_index do |row_arr, row|
         row_arr.each_with_index do |tile_data, col|
           img = tileset.tiles[tile_data[2]][tile_data[3]]
@@ -85,6 +86,7 @@ class Renderer
         end
       end
     end
+    result[:name] = name
     result
   end
 
@@ -95,7 +97,7 @@ class Renderer
     end.first
 
     map = @world[1][1]
-    map = map.first if map
+    map = map[:top_image] if map
 
     return unless map && focus_object
 
@@ -131,8 +133,8 @@ class Renderer
     (0..2).each do |row|
       (0..2).each do |col|
         next if @world[row][col].nil? || @world[row][col].empty?
-        bottom_img = @world[row][col][1]
-        top_img = @world[row][col][0]
+        bottom_img = @world[row][col][:bottom_image]
+        top_img = @world[row][col][:top_image]
         
         x = (col - 1) * top_img.width - (@focus[0] - @window.width / 2.0)
         y = (row - 1) * top_img.height - (@focus[1] - @window.height / 2.0)
@@ -143,31 +145,40 @@ class Renderer
   end
 
   def render_game_objects(objects)
-    objects.each do |go|
-      if (go.has_module('Displayable'))
-        x = go.attributes[:x] - (@focus[0] - (@window.width / 2.0))
-        y = go.attributes[:y] - (@focus[1] - (@window.height / 2.0))
-        z = go.attributes[:z]
-        height = go.attributes[:height]
-        width = go.attributes[:width]
-        img_src = go.attributes[:current_image]
-        if (img_src.include?(':'))
-          split = img_src.split(':')
-          current_image = @media_manager.animations[split[0]].current_image(split[1])
-        else
-          current_image = @media_manager.images[go.attributes[:current_image]]
-        end
-        if (x && y && current_image)
-          fx = fy = 1
-          z ||= Constants::Z_POSITIONS[:default_game_object]
-          if (height || width)
-            fx, fy = stretch_factor(current_image, height, width)
-          end
-          current_image.draw(x, y, z, fx, fy)
-        end
-      end
+    objects = objects.select do |obj|
+      obj.has_module("Displayable") && obj.get_attribute(:current_map)
     end
-  end
+    (0..2).each do |row|
+      (0..2).each do |col|
+        next unless @world[row] && @world[row][col] && @world[row][col][:name]
+        map_name = @world[row][col][:name]
+        objects_to_render = objects.select {|obj| obj.get_attribute(:current_map) == @world[row][col][:name]}
+        objects_to_render.each do |go|
+          x = go.attributes[:x] - (@focus[0] - (@window.width / 2.0)) + ((row-1) * Constants::MAP_HEIGHT)
+          y = go.attributes[:y] - (@focus[1] - (@window.height / 2.0)) + ((col-1) * Constants::MAP_WIDTH)
+          z = go.attributes[:z]
+          height = go.attributes[:height]
+          width = go.attributes[:width]
+          img_src = go.attributes[:current_image]
+          if (img_src.include?(':'))
+            split = img_src.split(':')
+            current_image = @media_manager.animations[split[0]].current_image(split[1])
+          else
+            current_image = @media_manager.images[go.attributes[:current_image]]
+          end
+          if (x && y && current_image)
+            fx = fy = 1
+            z ||= Constants::Z_POSITIONS[:default_game_object]
+            if (height || width)
+              fx, fy = stretch_factor(current_image, height, width)
+            end
+            current_image.draw(x, y, z, fx, fy)
+          end
+
+        end  # objects_to_render
+      end  # col
+    end  # row
+  end  # def render_game_objects
 
   def stretch_factor(image, stretch_to_height, stretch_to_width)
     x = y = 1

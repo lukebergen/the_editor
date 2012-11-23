@@ -22,8 +22,8 @@ class GameWindow < Gosu::Window
   def initialize
     super 1280, 800, false
     self.caption = "The Editor"
-    @game = Game.new
     @renderer = Renderer.new(self)
+    @game = Game.new(@renderer.media_manager.maps)
   end
 
   def update

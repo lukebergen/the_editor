@@ -9,7 +9,7 @@ class Player < GameObject
     add_attribute(:has_focus, true)
     add_attribute(:dir, :down)
 
-    @speed = 4.0
+    @speed = 10.0
     @dx = 0
     @dy = 0
 
@@ -101,25 +101,16 @@ class Player < GameObject
     if (y < 0)
       edge_hit(:top)
     end
-    if (x > Constants::MAP_WIDTH - get_attribute(:width))
+    if (x > Constants::MAP_WIDTH) # - get_attribute(:width))
       edge_hit(:right)
     end
-    if (y > Constants::MAP_HEIGHT - get_attribute(:height))
+    if (y > Constants::MAP_HEIGHT) # - get_attribute(:height))
       edge_hit(:bottom)
     end
   end
 
   def edge_hit(dir)
-    case dir
-    when :left
-      set_attribute(:x, 0)
-    when :top
-      set_attribute(:y, 0)
-    when :right
-      set_attribute(:x, Constants::MAP_WIDTH) - get_attribute(:width)
-    when :bottom
-      set_attribute(:y, Constants::MAP_HEIGHT) - get_attribute(:height)
-    end
+    @game.edge_hit(self, dir, on_world_edge: :stop)
   end
 
 end

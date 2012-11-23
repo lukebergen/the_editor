@@ -3,6 +3,7 @@ require 'gosu'
 require 'json'
 require File.join([APPLICATION_DIR, "tileset.rb"])
 require File.join([APPLICATION_DIR, "map.rb"])
+require File.join([APPLICATION_DIR, "utils.rb"])
 
 class GameWindow < Gosu::Window
 

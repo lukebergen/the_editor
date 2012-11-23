@@ -9,5 +9,16 @@ class Utils
       end
       constant
     end
+
+    def symbolize_keys(hash)
+      new_hash = {}
+      hash.each do |k, v|
+        if (v.is_a?(Hash))
+          v = symbolize_keys(v)
+        end
+        new_hash[k.to_sym] = v
+      end
+      new_hash
+    end
   end
 end
