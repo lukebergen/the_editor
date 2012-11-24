@@ -5,8 +5,8 @@ module Movable
   def self.extended(klass)
     klass.add_attribute(:dir, :down)
     klass.instance_eval do
-      listen_for(:key_down, :key_down)
-      listen_for(:key_up, :key_up)
+      listen_for(:start_move, :start_move)
+      listen_for(:stop_move, :stop_move)
       add_ticker(:move)
       add_ticker(:check_edge_hit)
       @speed = 10.0
@@ -14,48 +14,50 @@ module Movable
       @dy = 0
       @dirs_moving = []
       @last_dir = :down
+      @ani_form = "#{self.class.to_s}_<dir>"
+      @img_form = "#{self.class.to_s}_<dir>.png"
     end
   end
 
-  def key_down(key)
-    case key
-    when Gosu::KbUp
+  def start_move(dir)
+    case dir
+    when :up
       @dirs_moving << :up
       direction_ani
       @dy -= 1
-    when Gosu::KbDown
+    when :down
       @dirs_moving << :down
       direction_ani
       @dy += 1
-    when Gosu::KbLeft
+    when :left
       @dirs_moving << :left
       direction_ani
       @dx -= 1
-    when Gosu::KbRight
+    when :right
       @dirs_moving << :right
       direction_ani
       @dx += 1
     end
   end
 
-  def key_up(key)
-    case key
-    when Gosu::KbUp
+  def stop_move(dir)
+    case dir
+    when :up
       set_attribute(:dir, :up)
       @dirs_moving.delete(:up)
       direction_ani
       @dy += 1
-    when Gosu::KbDown
+    when :down
       set_attribute(:dir, :down)
       @dirs_moving.delete(:down)
       direction_ani
       @dy -= 1
-    when Gosu::KbLeft
+    when :left
       set_attribute(:dir, :left)
       @dirs_moving.delete(:left)
       direction_ani
       @dx += 1
-    when Gosu::KbRight
+    when :right
       set_attribute(:dir, :right)
       @dirs_moving.delete(:right)
       direction_ani
@@ -65,10 +67,12 @@ module Movable
 
   def direction_ani
     if (@dirs_moving.empty?)
-      set_attribute(:current_image, "player_#{get_attribute(:dir).to_s}.png")
+      img_str = @img_form.gsub('<dir>', get_attribute(:dir).to_s)
+      set_attribute(:current_image, img_str)
     else
       if !current_animation || current_animation.include?(get_attribute(:dir).to_s)
-        set_animation("player_walk_#{@dirs_moving.last.to_s}")
+        img_str = @ani_form.gsub('<dir>', @dirs_moving.last.to_s)
+        set_animation(img_str)
       end
     end
   end
