@@ -4,6 +4,7 @@ module Displayable
 
   def self.extended(klass)
     klass.add_attribute :current_image
+    klass.add_attribute(:dir, :down)
   end
 
   def set_image(name)
