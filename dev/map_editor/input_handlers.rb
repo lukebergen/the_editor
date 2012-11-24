@@ -13,7 +13,7 @@ module InputHandlers
     if id == Gosu::KbS
       notify("Saving")
       json = @map.to_json
-      File.open("./#{@map.name}.map", 'w') {|f| f.write(json)}
+      File.open("./#{@file_path}.map", 'w') {|f| f.write(json)}
     end
     if id == Gosu::KbT
       @selecting_tile = true
@@ -26,6 +26,9 @@ module InputHandlers
       @block_mode = false
     end
     if id == Gosu::KbB
+      @block_selection = []
+      @block_selection[0] = @currently_over[0]
+      @block_selection[1] = @currently_over[1]
       @block_mode = true
       @selecting_tile = false
       @selecting_object = false
@@ -34,11 +37,33 @@ module InputHandlers
       # used for debugging stuff
     end
     if id == Gosu::MsLeft
-      left_mouse_click
+      if (@block_mode)
+        
+      else
+        left_mouse_click
+      end
     end
     if id == Gosu::MsRight
       right_mouse_click
     end
+  end
+
+  def button_up(id)
+    if id == Gosu::MsLeft
+      if (@block_mode)
+        finalize_block_selection
+      end
+    end
+  end
+
+  def finalize_block_selection
+    (@block_selection[0]..@block_selection[2]).each do |row|
+      (@block_selection[1]..@block_selection[3]).each do |col|
+        @map.tiles[row][col][4] = 1
+      end
+    end
+    @block_mode = false
+    @block_selection = []
   end
 
   def left_mouse_click

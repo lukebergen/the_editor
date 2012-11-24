@@ -44,7 +44,6 @@ module Drawers
   end
 
   def draw_object_selection
-    # BOOKMARK
     i = 0
     ts = @tileset.tile_size
     @tileset.objects.each do |object_name, tiles|
@@ -74,8 +73,6 @@ module Drawers
   end
 
   def draw_selected_object
-    # draw the currently selected object
-    # BOOKMARK
     ts = @tileset.tile_size
     obj_arr = @tileset.objects[@selected_object]
     obj_arr.each_with_index do |row, i|
@@ -89,6 +86,23 @@ module Drawers
         img.draw(@currently_over[1]*ts + j*ts, @currently_over[0]*ts + i*ts, 1000)
       end
     end
+  end
+
+  def draw_block_selection
+    ts = @tileset.tile_size
+    sx = @block_selection[1] * ts
+    ex = @block_selection[3] * ts + ts
+    sy = @block_selection[0] * ts
+    ey = @block_selection[2] * ts + ts
+    w = Gosu::Color::WHITE
+    # top
+    draw_line(sx, sy, w, ex, sy, w, 300)
+    # right
+    draw_line(ex, sy, w, ex, ey, w, 300)
+    # bottom
+    draw_line(sx, ey, w, ex, ey, w, 300)
+    # left
+    draw_line(sx, sy, w, sx, ey, w, 300)
   end
 
   def set_background

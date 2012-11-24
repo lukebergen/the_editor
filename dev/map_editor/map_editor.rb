@@ -20,6 +20,7 @@ class GameWindow < Gosu::Window
     @timer = 0
     @selecting_tile = false
     @dialog_font = Gosu::Font.new(self, Gosu::default_font_name, 20)
+    @file_path = name
     if (height)
       @map = Map.new
       @map.name = name
@@ -47,7 +48,7 @@ class GameWindow < Gosu::Window
     @selected_object = nil
     @currently_over = [0,0]
     @block_mode = false
-    @block_selection = [0,0,0,0]
+    @block_selection = nil
   end
 
   def needs_cursor?
@@ -60,12 +61,14 @@ class GameWindow < Gosu::Window
   end
 
   def draw
-    #draw_mouse
 
     if (@selecting_tile)
       draw_tile_selection
     elsif (@selecting_object)
       draw_object_selection
+    elsif (@block_mode)
+      draw_block_selection
+      draw_map
     else
       if (@selected_tile)
         draw_selected_tile

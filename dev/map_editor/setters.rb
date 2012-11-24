@@ -9,6 +9,10 @@ module Setters
   end
 
   def set_block_selection
-    @block_selection = [@block_selection[0], @block_selection[1], @currently_over[0], @currently_over[1]]
+    if (button_down?(Gosu::MsLeft))
+      @block_selection = [@block_selection[0], @block_selection[1], @currently_over[0], @currently_over[1]]
+    else
+      @block_selection = [@currently_over[0], @currently_over[1], @currently_over[0], @currently_over[1]]
+    end
   end
 end
