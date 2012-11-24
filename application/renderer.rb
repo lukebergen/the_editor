@@ -18,9 +18,6 @@ class Renderer
   def paint(game)
     set_background
 
-    if (@current_map != game.current_map)
-      build_world(game.current_map)
-    end
     render_world
 
     render_game_objects(game.objects)
@@ -33,6 +30,9 @@ class Renderer
   def tick(game)
     @media_manager.animations.values.each do |ani|
       ani.tick
+    end
+    if (@current_map != game.current_map)
+      build_world(game.current_map)
     end
     update_focus(game)
   end
