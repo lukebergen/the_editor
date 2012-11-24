@@ -10,7 +10,7 @@ class Renderer
     @dialog_font = Gosu::Font.new(@window, Gosu::default_font_name, 20)
     @mouse_img = Gosu::Image.new(@window, "#{APPLICATION_DIR}/media/system/mouse.png")
     @pre_rendered_maps = {}
-    @world = [[],[],[]]
+    @neighbors = [[],[],[]]
     @current_map = nil
     @focus = [@window.width / 2.0, @window.height / 2.0]
   end
@@ -38,28 +38,28 @@ class Renderer
   end
 
   def build_world(map_name)
-    @world = [[],[],[]]
+    @neighbors = [[],[],[]]
     @current_map = map_name
     map = media_manager.maps[map_name]
-    @world[1][1] = build_map(map_name)
+    @neighbors[1][1] = build_map(map_name)
     map.neighbors.each do |key, name|
       case key
       when :top_left
-        @world[0][0] = build_map(name)
+        @neighbors[0][0] = build_map(name)
       when :top
-        @world[0][1] = build_map(name)
+        @neighbors[0][1] = build_map(name)
       when :topright
-        @world[0][2] = build_map(name)
+        @neighbors[0][2] = build_map(name)
       when :left
-        @world[1][0] = build_map(name)
+        @neighbors[1][0] = build_map(name)
       when :right
-        @world[1][2] = build_map(name)
+        @neighbors[1][2] = build_map(name)
       when :bottomleft
-        @world[2][0] = build_map(name)
+        @neighbors[2][0] = build_map(name)
       when :bottom
-        @world[2][1] = build_map(name)
+        @neighbors[2][1] = build_map(name)
       when :bottomright
-        @world[2][2] = build_map(name)
+        @neighbors[2][2] = build_map(name)
       end
     end
   end
@@ -96,7 +96,7 @@ class Renderer
       obj.has_attribute?(:has_focus) && obj.get_attribute(:has_focus)
     end.first
 
-    map = @world[1][1]
+    map = @neighbors[1][1]
     map = map[:top_image] if map
 
     return unless map && focus_object
@@ -104,10 +104,10 @@ class Renderer
     center_x = @window.width / 2.0
     center_y = @window.height / 2.0
 
-    has_left     = !(@world[0][0] || @world[1][0] || @world[2][0]).nil?
-    has_top      = !(@world[0][0] || @world[0][1] || @world[0][2]).nil?
-    has_right    = !(@world[0][2] || @world[1][2] || @world[2][2]).nil?
-    has_bottom   = !(@world[2][0] || @world[2][1] || @world[2][2]).nil?
+    has_left     = !(@neighbors[0][0] || @neighbors[1][0] || @neighbors[2][0]).nil?
+    has_top      = !(@neighbors[0][0] || @neighbors[0][1] || @neighbors[0][2]).nil?
+    has_right    = !(@neighbors[0][2] || @neighbors[1][2] || @neighbors[2][2]).nil?
+    has_bottom   = !(@neighbors[2][0] || @neighbors[2][1] || @neighbors[2][2]).nil?
 
     # set focus assuming there's a neighbor, then reset it to center if no neighbor
     fx = focus_object.get_attribute(:x)
@@ -132,9 +132,9 @@ class Renderer
   def render_world
     (0..2).each do |row|
       (0..2).each do |col|
-        next if @world[row][col].nil? || @world[row][col].empty?
-        bottom_img = @world[row][col][:bottom_image]
-        top_img = @world[row][col][:top_image]
+        next if @neighbors[row][col].nil? || @neighbors[row][col].empty?
+        bottom_img = @neighbors[row][col][:bottom_image]
+        top_img = @neighbors[row][col][:top_image]
         
         x = (col - 1) * top_img.width - (@focus[0] - @window.width / 2.0)
         y = (row - 1) * top_img.height - (@focus[1] - @window.height / 2.0)
@@ -150,9 +150,9 @@ class Renderer
     end
     (0..2).each do |row|
       (0..2).each do |col|
-        next unless @world[row] && @world[row][col] && @world[row][col][:name]
-        map_name = @world[row][col][:name]
-        objects_to_render = objects.select {|obj| obj.get_attribute(:current_map) == @world[row][col][:name]}
+        next unless @neighbors[row] && @neighbors[row][col] && @neighbors[row][col][:name]
+        map_name = @neighbors[row][col][:name]
+        objects_to_render = objects.select {|obj| obj.get_attribute(:current_map) == @neighbors[row][col][:name]}
         objects_to_render.each do |go|
           x = go.attributes[:x] - (@focus[0] - (@window.width / 2.0)) + ((row-1) * Constants::MAP_HEIGHT)
           y = go.attributes[:y] - (@focus[1] - (@window.height / 2.0)) + ((col-1) * Constants::MAP_WIDTH)

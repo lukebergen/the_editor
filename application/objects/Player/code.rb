@@ -3,7 +3,6 @@ class Player < GameObject
     super(game)
     add_module("Displayable")
     add_module("Touchable")
-    add_module("Interactive")
     add_module("Tickable")
     add_module("Movable")
 

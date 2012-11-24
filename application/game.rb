@@ -97,7 +97,7 @@ class Game
 
   def emit(message, *args, &block)
     @objects.each do |obj|
-      if (obj.listeners.has_key?(message))
+      if (obj.listens_for?(message))
         callback = obj.listeners[message]
         obj.send(callback, *args, &block)
       end

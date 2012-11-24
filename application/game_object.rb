@@ -9,7 +9,6 @@ class GameObject
     @game = game
     @attributes = {}
     @listeners = {}
-    @tickers = []
     @modules = []
     @code_string = File.read(__FILE__).gsub(/^[ ]*/, '')
   end
@@ -45,6 +44,21 @@ class GameObject
   def has_attribute?(key)
     @attributes.has_key?(key)
   end
+
+  def listen_for(event, callback)
+    @listeners[event] = callback
+  end
+
+  def listens_for?(k)
+    @listeners.has_key?(k)
+  end
+
+  def emit(event, *args, &block)
+    if (@game)
+      @game.emit(event, *args, &block)
+    end
+  end
+
 
   def add_module(mod_name)
     unless @modules.include?(mod_name)

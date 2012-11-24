@@ -1,7 +1,9 @@
 module Tickable
 
   def self.extended(klass)
-    klass.instance_variable_set(:@tickers, [])
+    klass.instance_eval do
+      @tickers = []
+    end
   end
 
   def tick
