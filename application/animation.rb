@@ -6,10 +6,12 @@ class Animation
   def initialize(win, path)
     @frames = []
     hash = JSON::load(File.read(File.join([path, 'data.json'])))
-    hash['frames'].each do |frame|
+    file_name = File.join([path, hash["frame_file"] || "frames.png"])
+    frame_images = Gosu::Image.load_tiles(win, file_name, hash["frame_width"], hash["frame_height"], true)
+    frame_images.each_with_index do |frame, i|
       h = {}
-      h[:image] = Gosu::Image.new(win, File.join([path, frame['file']]))
-      h[:timer] = frame['timer'].to_i
+      h[:image] = frame
+      h[:timer] = hash["timers"][i]
       @frames << h
     end
     @repeat = hash['repeat']

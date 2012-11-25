@@ -1,22 +1,7 @@
 {
   "repeat": "repeat",
-  "frames":
-  [
-    {
-      "file":"1.png",
-      "timer":5
-    },
-    {
-      "file":"2.png",
-      "timer":5
-    },
-    {
-      "file":"3.png",
-      "timer":5
-    },
-    {
-      "file":"4.png",
-      "timer":5
-    }
-  ]
+  "frame_count": 4,
+  "frame_width": 24,
+  "frame_height": 24,
+  "timers": [5, 5, 5, 5]
 }
