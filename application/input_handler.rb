@@ -1,4 +1,11 @@
 module InputHandler
+
+  KEY_MAP = {}
+  consts = Gosu.constants.select {|k| k[0..1] == "Kb" || k[0..1] == "Ms"}
+  consts.each do |const|
+    KEY_MAP[Gosu.const_get(const)] = const.to_sym
+  end
+
   def self.included(klass)
 
     def button_down(id)
@@ -8,11 +15,11 @@ module InputHandler
       if id == Gosu::KbD
         do_debugger
       end
-      @game.emit(:key_down, id)
+      @game.emit(:key_down, InputHandler::KEY_MAP[id])
     end
 
     def button_up(id)
-      @game.emit(:key_up, id)
+      @game.emit(:key_up, InputHandler::KEY_MAP[id])
     end
 
   end

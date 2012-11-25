@@ -20,26 +20,26 @@ end
 
 def key_down(key)
   case key
-  when Gosu::KbUp
+  when :KbUp
     emit(:start_move, :up)
-  when Gosu::KbDown
+  when :KbDown
     emit(:start_move, :down)
-  when Gosu::KbLeft
+  when :KbLeft
     emit(:start_move, :left)
-  when Gosu::KbRight
+  when :KbRight
     emit(:start_move, :right)
   end
 end
 
 def key_up(key)
   case key
-  when Gosu::KbUp
+  when :KbUp
     emit(:stop_move, :up)
-  when Gosu::KbDown
+  when :KbDown
     emit(:stop_move, :down)
-  when Gosu::KbLeft
+  when :KbLeft
     emit(:stop_move, :left)
-  when Gosu::KbRight
+  when :KbRight
     emit(:stop_move, :right)
   end
 end
