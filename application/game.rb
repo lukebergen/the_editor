@@ -6,9 +6,6 @@ modules.each do |filename|
 end
 
 game_objects = Dir.glob(File.join([APPLICATION_DIR, 'objects', '*', 'code.rb']))
-game_objects.each do |filename|
-  require filename
-end
 
 class Game
 
@@ -24,16 +21,24 @@ class Game
     objects = []
     paths = Dir.glob(File.join([APPLICATION_DIR, 'objects', '*']))
     paths.each do |path|
-      klass = Utils.constantize(File.basename(path))
-      obj = klass.new(self)
-      json = File.read(File.join([path, 'data.json']))
-      hash = Utils.symbolize_keys(JSON::load(json))
-      obj.attributes = obj.attributes.merge(hash)
-      obj.post_json_init if obj.respond_to?(:post_json_init)
+      obj = load_game_object(path)
       objects << obj
     end
-
     return objects
+  end
+
+  def load_game_object(path)
+    name = File.basename(path)
+    obj = GameObject.new(self, name)
+    code = File.read(File.join([path, 'code.rb']))
+    obj.code_string << code << "\n"
+    obj.instance_eval(code)
+    obj.init
+    json = File.read(File.join([path, 'data.json']))
+    hash = Utils.symbolize_keys(JSON::load(json))
+    obj.attributes = obj.attributes.merge(hash)
+    obj.post_json_init if obj.respond_to?(:post_json_init)
+    return obj
   end
 
   def edge_hit(object, dir, options)

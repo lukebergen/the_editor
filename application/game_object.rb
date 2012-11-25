@@ -2,11 +2,12 @@ MODULES_DIR = File.join([APPLICATION_DIR, 'go_modules'])
 
 class GameObject
 
-  attr_accessor :modules, :attributes, :listeners
+  attr_accessor :modules, :attributes, :listeners, :name
   attr_reader :code_string
 
-  def initialize(game)
+  def initialize(game, name)
     @game = game
+    @name = name
     @attributes = {}
     @listeners = {}
     @modules = []
@@ -58,7 +59,6 @@ class GameObject
       @game.emit(event, *args, &block)
     end
   end
-
 
   def add_module(mod_name)
     unless @modules.include?(mod_name)

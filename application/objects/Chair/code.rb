@@ -1,6 +1,3 @@
-class Chair < GameObject
-  def initialize(game)
-    super(game)
-    add_module("Displayable")
-  end
+def init
+  add_module("Displayable")
 end
