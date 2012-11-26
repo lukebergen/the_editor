@@ -49,6 +49,8 @@ class GameWindow < Gosu::Window
     @currently_over = [0,0]
     @block_mode = false
     @block_selection = nil
+    @focus = [0,0]
+    @keys = {}
   end
 
   def needs_cursor?
@@ -56,6 +58,7 @@ class GameWindow < Gosu::Window
   end
 
   def update
+    set_focus
     set_currently_over
     set_block_selection if @block_mode
   end

@@ -46,6 +46,18 @@ module InputHandlers
     if id == Gosu::MsRight
       right_mouse_click
     end
+    if id == Gosu::KbDown
+      @keys[:down] = true
+    end
+    if id == Gosu::KbUp
+      @keys[:up] = true
+    end
+    if id == Gosu::KbLeft
+      @keys[:left] = true
+    end
+    if id == Gosu::KbRight
+      @keys[:right] = true
+    end
   end
 
   def button_up(id)
@@ -53,6 +65,18 @@ module InputHandlers
       if (@block_mode)
         finalize_block_selection
       end
+    end
+    if id == Gosu::KbDown
+      @keys[:down] = false
+    end
+    if id == Gosu::KbUp
+      @keys[:up] = false
+    end
+    if id == Gosu::KbLeft
+      @keys[:left] = false
+    end
+    if id == Gosu::KbRight
+      @keys[:right] = false
     end
   end
 

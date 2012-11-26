@@ -7,27 +7,27 @@ module Drawers
       row.each_with_index do |data_arr, x|
         next if data_arr.empty?
         img = @tileset.tiles[data_arr[0]][data_arr[1]]
-        img.draw(x*ts, y*ts, 210)
+        img.draw(x * ts + @focus[0], y * ts + @focus[1], 210)
         img = @tileset.tiles[data_arr[2]][data_arr[3]]
-        img.draw(x*ts, y*ts, 200)
+        img.draw(x * ts + @focus[0], y * ts + @focus[1], 200)
 
         # blocking tiles
         if (@block_mode && data_arr[4] == 1)
           # top
           if (@map.tiles[y-1] && @map.tiles[y-1][x][4] == 0)
-            self.draw_line(x*ts,y*ts,Gosu::Color::YELLOW, x*ts+ts, y*ts, Gosu::Color::YELLOW, 300)
+            self.draw_line(x*ts+@focus[0],y*ts+@focus[1],Gosu::Color::YELLOW, x*ts+ts+@focus[0], y*ts+@focus[1], Gosu::Color::YELLOW, 300)
           end
           # right
           if (@map.tiles[y][x+1] && @map.tiles[y][x+1][4] == 0)
-            self.draw_line(x*ts+ts,y*ts,Gosu::Color::YELLOW, x*ts+ts, y*ts+ts, Gosu::Color::YELLOW, 300)
+            self.draw_line(x*ts+ts+@focus[0],y*ts+@focus[0],Gosu::Color::YELLOW, x*ts+ts+@focus[0], y*ts+ts+@focus[1], Gosu::Color::YELLOW, 300)
           end
           # bottom
           if (@map.tiles[y+1] && @map.tiles[y+1][x][4] == 0)
-            self.draw_line(x*ts,y*ts+ts,Gosu::Color::YELLOW, x*ts+ts, y*ts+ts, Gosu::Color::YELLOW, 300)
+            self.draw_line(x*ts+@focus[0],y*ts+ts+@focus[1],Gosu::Color::YELLOW, x*ts+ts+@focus[0], y*ts+ts+@focus[1], Gosu::Color::YELLOW, 300)
           end
           # left
           if (@map.tiles[y][x-1] && @map.tiles[y][x-1][4] == 0)
-            self.draw_line(x*ts,y*ts,Gosu::Color::YELLOW, x*ts, y*ts+ts, Gosu::Color::YELLOW, 300)
+            self.draw_line(x*ts+@focus[0],y*ts+@focus[1],Gosu::Color::YELLOW, x*ts+@focus[0], y*ts+ts+@focus[1], Gosu::Color::YELLOW, 300)
           end
         end # if data_arr[4] == 1
       end # row.each
@@ -69,7 +69,7 @@ module Drawers
   def draw_selected_tile
     ts = @tileset.tile_size
     img = @tileset.tiles[@selected_tile[0]][@selected_tile[1]]
-    img.draw(@currently_over[1]*ts, @currently_over[0]*ts, 1000)
+    img.draw(@currently_over[1]*ts+@focus[0], @currently_over[0]*ts+@focus[1], 1000)
   end
 
   def draw_selected_object
@@ -79,21 +79,21 @@ module Drawers
       row.each_with_index do |col, j|
         img = @tileset.tiles[col[2]][col[3]]
         #img.draw(j*ts, i*ts, 200)
-        img.draw(@currently_over[1]*ts + j*ts, @currently_over[0]*ts + i*ts, 1000)
+        img.draw(@currently_over[1]*ts + j*ts + @focus[0], @currently_over[0]*ts + i*ts + @focus[1], 1000)
 
         img = @tileset.tiles[col[0]][col[1]]
         #img.draw(j*ts, i*ts, 200)
-        img.draw(@currently_over[1]*ts + j*ts, @currently_over[0]*ts + i*ts, 1000)
+        img.draw(@currently_over[1]*ts + j*ts + @focus[0], @currently_over[0]*ts + i*ts + @focus[1], 1000)
       end
     end
   end
 
   def draw_block_selection
     ts = @tileset.tile_size
-    sx = @block_selection[1] * ts
-    ex = @block_selection[3] * ts + ts
-    sy = @block_selection[0] * ts
-    ey = @block_selection[2] * ts + ts
+    sx = @block_selection[1] * ts + @focus[0]
+    ex = @block_selection[3] * ts + ts + @focus[1]
+    sy = @block_selection[0] * ts + @focus[0]
+    ey = @block_selection[2] * ts + ts + @focus[1]
     w = Gosu::Color::WHITE
     # top
     draw_line(sx, sy, w, ex, sy, w, 300)
