@@ -66,6 +66,7 @@ class Renderer
 
   def build_map(name)
     map = media_manager.maps[name]
+    return unless map
     tileset = media_manager.tilesets[map.tileset]
     mul = tileset.tile_size
 
