@@ -52,6 +52,19 @@ class GameWindow < Gosu::Window
 
 end
 
+$times = {}
+class Profiler
+  class << self
+    def b(tag)
+      $times[tag] ||= 0.0
+      s = Time.now
+      yield
+      $times[tag] += Time.now - s
+    end
+  end
+end
+P = Profiler
+
 if (ARGV[0] == "console")
   win = GameWindow.new
   win.do_debugger
