@@ -7,11 +7,11 @@ class Map
     if json
       map_hash = JSON.load(json)
       @name = map_hash["name"]
-      @height = map_hash["height"]
-      @width = map_hash["width"]
-      @tiles = map_hash["tiles"]
-      @tileset = map_hash["tileset"]
-      @neighbors = Utils.symbolize_keys(map_hash["neighbors"])
+      @height = map_hash["height"] || 64
+      @width = map_hash["width"] || 64
+      @tiles = map_hash["tiles"] || (0...64).map{[]}
+      @tileset = map_hash["tileset"] || "tiles"
+      @neighbors = Utils.symbolize_keys(map_hash["neighbors"] || {})
     end
   end
 
