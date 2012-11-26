@@ -1,6 +1,6 @@
 module Movable
 
-  REQUIRES = ['Tickable', 'Locationable']
+  REQUIRES = ['Tickable', 'Displayable']
 
   def self.extended(klass)
     klass.add_attribute(:dir, :down)
@@ -104,7 +104,63 @@ module Movable
   end
 
   def edge_hit(dir)
-    @game.edge_hit(self, dir, on_world_edge: :stop)
+    options = {on_world_edge: :stop}
+    map = @game.maps[self.get_attribute(:current_map)]
+    case dir
+    when :left
+      if (map.neighbors[:left])
+        self.set_attribute(:x, Constants::MAP_WIDTH)
+        self.set_attribute(:current_map, map.neighbors[:left])
+        change_map(map.neighbors[:left])
+      else
+        if (options[:on_world_edge] == :stop)
+          self.set_attribute(:x, 0)
+        elsif (options[:on_world_edge] == :destroy)
+          destroy
+        end
+      end
+    when :top
+      if (map.neighbors[:top])
+        self.set_attribute(:y, Constants::MAP_HEIGHT)
+        self.set_attribute(:current_map, map.neighbors[:top])
+        change_map(map.neighbors[:top])
+      else
+        if (options[:on_world_edge] == :stop)
+          self.set_attribute(:y, 0)
+        elsif (options[:on_world_edge] == :destroy)
+          destroy
+        end
+      end
+    when :right
+      if (map.neighbors[:right])
+        self.set_attribute(:x, 0)
+        self.set_attribute(:current_map, map.neighbors[:right])
+        change_map(map.neighbors[:right])
+      else
+        if (options[:on_world_edge] == :stop)
+          self.set_attribute(:x, Constants::MAP_WIDTH)
+        elsif (options[:on_world_edge] == :destroy)
+          destroy
+        end
+      end
+    when :bottom
+      if (map.neighbors[:bottom])
+        self.set_attribute(:y, 0)
+        self.set_attribute(:current_map, map.neighbors[:bottom])
+        change_map(map.neighbors[:bottom])
+      else
+        if (options[:on_world_edge] == :stop)
+          self.set_attribute(:y, Constants::MAP_HEIGHT)
+        elsif (options[:on_world_edge] == :destroy)
+          destroy
+        end
+      end
+    end
+  end
+
+  def change_map(map_name)
+    self.set_attribute(:current_map, map_name)
+    emit({object: self.name, message: :map_change, params: [map_name]})
   end
 
 end

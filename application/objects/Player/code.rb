@@ -8,6 +8,7 @@ def init
 
   listen_for(:key_down, :key_down)
   listen_for(:key_up, :key_up)
+  listen_for(:map_change, :map_change)
 
   @img_form = "player_<dir>.png"
   @ani_form = "player_walk_<dir>"
@@ -21,25 +22,33 @@ end
 def key_down(key)
   case key
   when :KbUp
-    emit(:start_move, :up)
+    emit(object: 'Player', message: :start_move, params: [:up])
   when :KbDown
-    emit(:start_move, :down)
+    emit(object: 'Player', message: :start_move, params: [:down])
   when :KbLeft
-    emit(:start_move, :left)
+    emit(object: 'Player', message: :start_move, params: [:left])
   when :KbRight
-    emit(:start_move, :right)
+    emit(object: 'Player', message: :start_move, params: [:right])
+  when :KbSpace
+    emit(object: 'Chair', message: :start_move, params: [:right])
   end
 end
 
 def key_up(key)
   case key
   when :KbUp
-    emit(:stop_move, :up)
+    emit(object: 'Player', message: :stop_move, params: [:up])
   when :KbDown
-    emit(:stop_move, :down)
+    emit(object: 'Player', message: :stop_move, params: [:down])
   when :KbLeft
-    emit(:stop_move, :left)
+    emit(object: 'Player', message: :stop_move, params: [:left])
   when :KbRight
-    emit(:stop_move, :right)
+    emit(object: 'Player', message: :stop_move, params: [:right])
+  when :KbSpace
+    emit(object: 'Chair', message: :stop_move, params: [:right])
+  end
+
+  def map_change(map_name)
+    @game.change_map(map_name)
   end
 end

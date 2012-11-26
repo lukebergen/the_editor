@@ -41,70 +41,19 @@ class Game
     return obj
   end
 
-  def edge_hit(object, dir, options)
-    options = {on_world_edge: :destroy}.merge(options)
-    map = @maps[@current_map]
-    case dir
-    when :left
-      if (map.neighbors[:left])
-        object.set_attribute(:x, Constants::MAP_WIDTH) # - object.get_attribute(:width))
-        object.set_attribute(:current_map, map.neighbors[:left])
-        change_map(map.neighbors[:left])
-      else
-        if (options[:on_world_edge] == :stop)
-          object.set_attribute(:x, 0)
-        elsif (options[:on_world_edge] == :destroy)
-          @objects.delete(object)
-        end
-      end
-    when :top
-      if (map.neighbors[:top])
-        object.set_attribute(:y, Constants::MAP_HEIGHT) # - object.get_attribute(:height))
-        object.set_attribute(:current_map, map.neighbors[:top])
-        change_map(map.neighbors[:top])
-      else
-        if (options[:on_world_edge] == :stop)
-          object.set_attribute(:y, 0)
-        elsif (options[:on_world_edge] == :destroy)
-          @objects.delete(object)
-        end
-      end
-    when :right
-      if (map.neighbors[:right])
-        object.set_attribute(:x, 0)
-        object.set_attribute(:current_map, map.neighbors[:right])
-        change_map(map.neighbors[:right])
-      else
-        if (options[:on_world_edge] == :stop)
-          object.set_attribute(:x, Constants::MAP_WIDTH) # - object.get_attribute(:width))
-        elsif (options[:on_world_edge] == :destroy)
-          @objects.delete(object)
-        end
-      end
-    when :bottom
-      if (map.neighbors[:bottom])
-        object.set_attribute(:y, 0)
-        object.set_attribute(:current_map, map.neighbors[:bottom])
-        change_map(map.neighbors[:bottom])
-      else
-        if (options[:on_world_edge] == :stop)
-          object.set_attribute(:y, Constants::MAP_HEIGHT) # - object.get_attribute(:height))
-        elsif (options[:on_world_edge] == :destroy)
-          @objects.delete(object)
-        end
-      end
-    end
-  end
-
   def change_map(map_name)
     @current_map = map_name
   end
 
-  def emit(message, *args, &block)
+  def emit(hash, &block)
+    message = hash[:message]
+    params = hash[:params]
+    object_name = hash[:object]
     @objects.each do |obj|
+      next if object_name && obj.name != object_name
       if (obj.listens_for?(message))
         callback = obj.listeners[message]
-        obj.send(callback, *args, &block)
+        obj.send(callback, *params, &block)
       end
     end
   end

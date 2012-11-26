@@ -54,9 +54,9 @@ class GameObject
     @listeners.has_key?(k)
   end
 
-  def emit(event, *args, &block)
+  def emit(hash, &block)
     if (@game)
-      @game.emit(event, *args, &block)
+      @game.emit(hash, &block)
     end
   end
 
@@ -78,6 +78,10 @@ class GameObject
 
   def has_module(m)
     @modules.include?(m)
+  end
+
+  def destroy
+    @game.objects.delete(self)
   end
 
 end

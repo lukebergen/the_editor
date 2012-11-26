@@ -15,11 +15,11 @@ module InputHandler
       if id == Gosu::KbD
         do_debugger
       end
-      @game.emit(:key_down, InputHandler::KEY_MAP[id])
+      @game.emit(message: :key_down, params: [InputHandler::KEY_MAP[id]])
     end
 
     def button_up(id)
-      @game.emit(:key_up, InputHandler::KEY_MAP[id])
+      @game.emit(message: :key_up, params: [InputHandler::KEY_MAP[id]])
     end
 
   end
