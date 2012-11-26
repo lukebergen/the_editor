@@ -23,7 +23,7 @@ class GameWindow < Gosu::Window
     @file_path = name
     if (height)
       @map = Map.new
-      @map.name = name
+      @map.name = File.basename(name)
       @map.height = height.to_i
       @map.width = width.to_i
       @map.tileset = tileset_name

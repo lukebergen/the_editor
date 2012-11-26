@@ -48,17 +48,17 @@ class Renderer
         @neighbors[0][0] = build_map(name)
       when :top
         @neighbors[0][1] = build_map(name)
-      when :topright
+      when :top_right
         @neighbors[0][2] = build_map(name)
       when :left
         @neighbors[1][0] = build_map(name)
       when :right
         @neighbors[1][2] = build_map(name)
-      when :bottomleft
+      when :bottom_left
         @neighbors[2][0] = build_map(name)
       when :bottom
         @neighbors[2][1] = build_map(name)
-      when :bottomright
+      when :bottom_right
         @neighbors[2][2] = build_map(name)
       end
     end
