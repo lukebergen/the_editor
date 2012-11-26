@@ -154,8 +154,8 @@ class Renderer
         map_name = @neighbors[row][col][:name]
         objects_to_render = objects.select {|obj| obj.get_attribute(:current_map) == @neighbors[row][col][:name]}
         objects_to_render.each do |go|
-          x = go.attributes[:x] - (@focus[0] - (@window.width / 2.0)) + ((row-1) * Constants::MAP_HEIGHT)
-          y = go.attributes[:y] - (@focus[1] - (@window.height / 2.0)) + ((col-1) * Constants::MAP_WIDTH)
+          x = go.attributes[:x] - (@focus[0] - (@window.width / 2.0)) + ((col-1) * Constants::MAP_WIDTH)
+          y = go.attributes[:y] - (@focus[1] - (@window.height / 2.0)) + ((row-1) * Constants::MAP_HEIGHT)
           z = go.attributes[:z]
           height = go.attributes[:height]
           width = go.attributes[:width]
