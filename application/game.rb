@@ -13,7 +13,7 @@ class Game
 
   def initialize(maps)
     @objects = load_game_objects
-    @current_map = "dev_area0001"
+    @current_map = "dev_area0101"
     @maps = maps
   end
 

@@ -41,52 +41,54 @@ class Renderer
     @neighbors = [[],[],[]]
     @current_map = map_name
     map = media_manager.maps[map_name]
-    @neighbors[1][1] = build_map(map_name)
-    map.neighbors.each do |key, name|
-      case key
-      when :top_left
-        @neighbors[0][0] = build_map(name)
-      when :top
-        @neighbors[0][1] = build_map(name)
-      when :top_right
-        @neighbors[0][2] = build_map(name)
-      when :left
-        @neighbors[1][0] = build_map(name)
-      when :right
-        @neighbors[1][2] = build_map(name)
-      when :bottom_left
-        @neighbors[2][0] = build_map(name)
-      when :bottom
-        @neighbors[2][1] = build_map(name)
-      when :bottom_right
-        @neighbors[2][2] = build_map(name)
+    @world = @window.record(1024*3, 1024*3) do
+      @neighbors[1][1] = build_map(map_name, 0, 0)
+      map.neighbors.each do |key, name|
+        case key
+        when :top_left
+          @neighbors[0][0] = build_map(name, -1024, -1024)
+        when :top
+          @neighbors[0][1] = build_map(name, 0, -1024)
+        when :top_right
+          @neighbors[0][2] = build_map(name, 1024, -1024)
+        when :left
+          @neighbors[1][0] = build_map(name, -1024, 0)
+        when :right
+          @neighbors[1][2] = build_map(name, 1024, 0)
+        when :bottom_left
+          @neighbors[2][0] = build_map(name, -1024, 1024)
+        when :bottom
+          @neighbors[2][1] = build_map(name, 0, 1024)
+        when :bottom_right
+          @neighbors[2][2] = build_map(name, 1024, 1024)
+        end
       end
     end
   end
 
-  def build_map(name)
+  def build_map(name, offset_x, offset_y)
     map = media_manager.maps[name]
     return unless map
     tileset = media_manager.tilesets[map.tileset]
     mul = tileset.tile_size
 
     result = {}
-    result[:top_image] = @window.record(map.width*mul, map.height*mul) do
+    # result[:top_image] = @window.record(map.width*mul, map.height*mul) do
       map.tiles.each_with_index do |row_arr, row|
         row_arr.each_with_index do |tile_data, col|
           img = tileset.tiles[tile_data[0]][tile_data[1]]
-          img.draw(col * mul, row * mul, 0)
+          img.draw((col * mul) + offset_x, (row * mul) + offset_y, Constants::Z_POSITIONS[:top_tile])
         end
       end
-    end
-    result[:bottom_image] = @window.record(map.width*mul, map.height*mul) do
+    # end
+    # result[:bottom_image] = @window.record(map.width*mul, map.height*mul) do
       map.tiles.each_with_index do |row_arr, row|
         row_arr.each_with_index do |tile_data, col|
           img = tileset.tiles[tile_data[2]][tile_data[3]]
-          img.draw(col * mul, row * mul, 0)
+          img.draw((col * mul) + offset_x, (row * mul) + offset_y, Constants::Z_POSITIONS[:bottom_tile])
         end
       end
-    end
+    # end
     result[:name] = name
     result
   end
@@ -97,10 +99,7 @@ class Renderer
       obj.has_attribute?(:has_focus) && obj.get_attribute(:has_focus)
     end.first
 
-    map = @neighbors[1][1]
-    map = map[:top_image] if map
-
-    return unless map && focus_object
+    return unless focus_object
 
     center_x = @window.width / 2.0
     center_y = @window.height / 2.0
@@ -119,30 +118,31 @@ class Renderer
     if (fx < center_x && !has_left)
       @focus[0] = center_x
     end
-    if (fx > (map.width - center_x) && !has_right)
-      @focus[0] = (map.width - center_x)
+    if (fx > (1024 - center_x) && !has_right)
+      @focus[0] = (1024 - center_x)
     end
     if (fy < center_y && !has_top)
       @focus[1] = center_y
     end
-    if (fy > (map.width - center_y) && !has_bottom)
-      @focus[1] = (map.width - center_y)
+    if (fy > (1024 - center_y) && !has_bottom)
+      @focus[1] = (1024 - center_y)
     end
   end
 
   def render_world
-    (0..2).each do |row|
-      (0..2).each do |col|
-        next if @neighbors[row][col].nil? || @neighbors[row][col].empty?
-        bottom_img = @neighbors[row][col][:bottom_image]
-        top_img = @neighbors[row][col][:top_image]
+    @world.draw((@window.width / 2.0) - @focus[0], (@window.height / 2.0) - @focus[1], Constants::Z_POSITIONS[:top_tile])
+    # (0..2).each do |row|
+    #   (0..2).each do |col|
+    #     next if @neighbors[row][col].nil? || @neighbors[row][col].empty?
+    #     bottom_img = @neighbors[row][col][:bottom_image]
+    #     top_img = @neighbors[row][col][:top_image]
         
-        x = (col - 1) * top_img.width - (@focus[0] - @window.width / 2.0)
-        y = (row - 1) * top_img.height - (@focus[1] - @window.height / 2.0)
-        bottom_img.draw(x, y, Constants::Z_POSITIONS[:bottom_tile])
-        top_img.draw(x, y, Constants::Z_POSITIONS[:top_tile])
-      end
-    end
+    #     x = (col - 1) * top_img.width - (@focus[0] - @window.width / 2.0)
+    #     y = (row - 1) * top_img.height - (@focus[1] - @window.height / 2.0)
+    #     bottom_img.draw(x, y, Constants::Z_POSITIONS[:bottom_tile])
+    #     top_img.draw(x, y, Constants::Z_POSITIONS[:top_tile])
+    #   end
+    # end
   end
 
   def render_game_objects(objects)
