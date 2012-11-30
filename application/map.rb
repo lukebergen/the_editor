@@ -25,4 +25,12 @@ class Map
     h["neighbors"] = @neighbors
     JSON.dump(h)
   end
+
+  def blocked?(coordinates)
+    coordinates.each do |point|
+      return true if @tiles[point[0]][point[1]][4] == 1
+    end
+    return false
+  end
+
 end
