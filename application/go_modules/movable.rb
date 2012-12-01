@@ -84,25 +84,9 @@ module Movable
     old_y = get_attribute(:y)
     new_x = old_x + (@dx * (@speed - (@dirs_moving.count / 1.3)))
     new_y = old_y + (@dy * (@speed - (@dirs_moving.count / 1.3)))
-    do_x = do_y = true
-    if (collides?(next_move_tiles(new_x, old_y)))
-      do_x = false
-    end
-    if (collides?(next_move_tiles(old_x, new_y)))
-      do_y = false
-    end
+    do_x, do_y = collision_ok?(new_x, new_y)
     set_attribute(:x, new_x) if do_x
     set_attribute(:y, new_y) if do_y
-  end
-
-  def next_move_tiles(next_x, next_y)
-    my_coords = []
-    (0..tile_width).each do |row_diff|
-      (0..tile_height).each do |col_diff|
-        my_coords << [tile_y(next_y) + row_diff, tile_x(next_x) + col_diff]
-      end
-    end
-    my_coords
   end
 
   def unmove(dir=:all)
