@@ -3,6 +3,7 @@ def init
   add_module("Touchable")
   add_module("Tickable")
   add_module("Movable")
+  add_module("Collidable")
 
   add_attribute(:has_focus, true)
 

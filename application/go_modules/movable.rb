@@ -1,6 +1,6 @@
 module Movable
 
-  REQUIRES = ['Tickable', 'Displayable', 'Collidable']
+  REQUIRES = ['Tickable', 'Displayable']
 
   def self.extended(klass)
     klass.add_attribute(:dir, :down)
@@ -84,7 +84,11 @@ module Movable
     old_y = get_attribute(:y)
     new_x = old_x + (@dx * (@speed - (@dirs_moving.count / 1.3)))
     new_y = old_y + (@dy * (@speed - (@dirs_moving.count / 1.3)))
-    do_x, do_y = collision_ok?(new_x, new_y)
+    if (has_module?('Collidable'))
+      do_x, do_y = collision_ok?(new_x, new_y)
+    else
+      do_x = do_y = true
+    end
     set_attribute(:x, new_x) if do_x
     set_attribute(:y, new_y) if do_y
   end

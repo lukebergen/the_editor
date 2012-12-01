@@ -76,7 +76,7 @@ class GameObject
     args.flatten.each {|m| add_module(m)}
   end
 
-  def has_module(m)
+  def has_module?(m)
     @modules.include?(m)
   end
 

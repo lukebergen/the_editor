@@ -147,7 +147,7 @@ class Renderer
 
   def render_game_objects(objects)
     objects = objects.select do |obj|
-      obj.has_module("Displayable") && obj.get_attribute(:current_map)
+      obj.has_module?("Displayable") && obj.get_attribute(:current_map)
     end
     (0..2).each do |row|
       (0..2).each do |col|
