@@ -1,6 +1,6 @@
 module Movable
 
-  REQUIRES = ['Tickable', 'Displayable']
+  REQUIRES = ['Tickable', 'Displayable', 'Collidable']
 
   def self.extended(klass)
     klass.add_attribute(:dir, :down)
@@ -9,8 +9,6 @@ module Movable
       listen_for(:stop_move, :stop_move)
       add_ticker(:move)
       add_ticker(:check_edge_hit)
-      add_ticker(:check_tile_collisions)
-      add_ticker(:check_object_collisions)
       @speed = 10.0
       @dx = 0
       @dy = 0
@@ -84,8 +82,27 @@ module Movable
     return if @dx == 0 && @dy == 0
     old_x = get_attribute(:x)
     old_y = get_attribute(:y)
-    set_attribute(:x, old_x + (@dx * (@speed - (@dirs_moving.count / 1.3))))
-    set_attribute(:y, old_y + (@dy * (@speed - (@dirs_moving.count / 1.3))))
+    new_x = old_x + (@dx * (@speed - (@dirs_moving.count / 1.3)))
+    new_y = old_y + (@dy * (@speed - (@dirs_moving.count / 1.3)))
+    do_x = do_y = true
+    if (collides?(next_move_tiles(new_x, old_y)))
+      do_x = false
+    end
+    if (collides?(next_move_tiles(old_x, new_y)))
+      do_y = false
+    end
+    set_attribute(:x, new_x) if do_x
+    set_attribute(:y, new_y) if do_y
+  end
+
+  def next_move_tiles(next_x, next_y)
+    my_coords = []
+    (0..tile_width).each do |row_diff|
+      (0..tile_height).each do |col_diff|
+        my_coords << [tile_y(next_y) + row_diff, tile_x(next_x) + col_diff]
+      end
+    end
+    my_coords
   end
 
   def unmove(dir=:all)
@@ -169,25 +186,6 @@ module Movable
         elsif (options[:on_world_edge] == :destroy)
           destroy
         end
-      end
-    end
-  end
-
-  def check_tile_collisions
-    my_coords = []
-    (0..tile_width).each do |row_diff|
-      (0..tile_height).each do |col_diff|
-        my_coords << [tile_y + row_diff, tile_x + col_diff]
-      end
-    end
-    if @game.maps[get_attribute(:current_map)].blocked?(my_coords)
-      case @on_tile_collision
-      when :destroy
-        destroy
-      when :stop
-        d = :x if get_attribute(:dir) == :up || get_attribute(:dir) == :down
-        d = :y if get_attribute(:dir) == :left || get_attribute(:dir) == :right
-        unmove(d)
       end
     end
   end

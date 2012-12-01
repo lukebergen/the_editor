@@ -4,12 +4,12 @@ module Locationable
     klass.add_attributes :x, :y, :z, :height, :width
   end
 
-  def tile_x
-    (get_attribute(:x) / Constants::TILE_SIZE).round
+  def tile_x(false_x = nil)
+    ((false_x || get_attribute(:x) || 0.0) / Constants::TILE_SIZE).round
   end
 
-  def tile_y
-    (get_attribute(:y) / Constants::TILE_SIZE).round
+  def tile_y(false_y = nil)
+    ((false_y || get_attribute(:y) || 0.0) / Constants::TILE_SIZE).round
   end
 
   def tile_width

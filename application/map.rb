@@ -28,6 +28,7 @@ class Map
 
   def blocked?(coordinates)
     coordinates.each do |point|
+      next if @tiles[point[0]].nil? || @tiles[point[0]][point[1]].nil?
       return true if @tiles[point[0]][point[1]][4] == 1
     end
     return false
