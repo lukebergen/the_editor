@@ -33,15 +33,41 @@ module Collidable
     tile_block_x = tile_block_y = true
 
     tile_block_x = !@game.maps[get_attribute(:current_map)].blocked?(with_x_shift)
-    unless tile_block_x
-      # so, we haven't hit a blocking tile, what about objects?
-      # TODO handle object collision detection
+    if tile_block_x
+      (@game.objects - [self]).each do |other|
+        other_arr = []
+        (0..other.tile_width).each do |w|
+          (0..other.tile_height).each do |h|
+            other_arr << [other.tile_x + w, other.tile_y + h]
+          end
+        end
+        unless (with_x_shift & other_arr).empty?
+          if other.listens_for?(:collide)
+            tile_block_x = @game.emit(object: other.name, message: :collide, params: [self.name])
+          else
+            tile_block_x = false
+          end
+        end
+      end
     end
 
     tile_block_y = !@game.maps[get_attribute(:current_map)].blocked?(with_y_shift)
-    unless tile_block_x
-      # so, we haven't hit a blocking tile, what about objects?
-      # TODO handle object collision detection
+    if tile_block_x
+      (@game.objects - [self]).each do |other|
+        other_arr = []
+        (0..other.tile_width).each do |w|
+          (0..other.tile_height).each do |h|
+            other_arr << [other.tile_x + w, other.tile_y + h]
+          end
+        end
+        unless (with_y_shift & other_arr).empty?
+          if other.listens_for?(:collide)
+            tile_block_y = @game.emit(object: other.name, message: :collide, params: [self.name])
+          else
+            tile_block_y = false
+          end
+        end
+      end
     end
 
     [tile_block_x, tile_block_y]

@@ -49,13 +49,15 @@ class Game
     message = hash[:message]
     params = hash[:params]
     object_name = hash[:object]
+    last_result = nil
     @objects.each do |obj|
       next if object_name && obj.name != object_name
       if (obj.listens_for?(message))
         callback = obj.listeners[message]
-        obj.send(callback, *params, &block)
+        last_result = obj.send(callback, *params, &block)
       end
     end
+    last_result
   end
 
   def tick
