@@ -1,6 +1,5 @@
 def init
   add_module("Displayable")
-  add_module("Touchable")
   add_module("Tickable")
   add_module("Movable")
   add_module("Collidable")
