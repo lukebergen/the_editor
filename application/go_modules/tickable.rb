@@ -16,4 +16,7 @@ module Tickable
     @tickers << meth
   end
 
+  def remove_ticker(meth)
+    @tickers.delete(meth)
+  end
 end

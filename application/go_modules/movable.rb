@@ -93,18 +93,6 @@ module Movable
     set_attribute(:y, new_y) if do_y
   end
 
-  def unmove(dir=:all)
-    return if @dx == 0 && @dy == 0
-    old_x = get_attribute(:x)
-    old_y = get_attribute(:y)
-    if (dir == :x || dir == :all)
-      set_attribute(:x, old_x - (@dx * (@speed - (@dirs_moving.count / 1.3))))
-    end
-    if (dir == :y || dir == :all)
-      set_attribute(:y, old_y - (@dy * (@speed - (@dirs_moving.count / 1.3))))
-    end
-  end
-
   def check_edge_hit
     x = get_attribute(:x)
     y = get_attribute(:y)
@@ -178,8 +166,35 @@ module Movable
     end
   end
 
-  def check_object_collisions
+  def move_to(x, y, speed=1)
+    @move_to_final_x = x
+    @move_to_final_y = y
+    @move_to_speed = 5
+    add_ticker(:do_move)
+    do_move
+  end
 
+  def do_move
+    old_x = get_attribute(:x)
+    old_y = get_attribute(:y)
+    diff_x = @move_to_final_x - old_x
+    diff_y = @move_to_final_y - old_y
+
+    x_component = diff_x.to_f / (diff_x.abs + diff_y.abs)
+    y_component = diff_y.to_f / (diff_x.abs + diff_y.abs)
+    
+    new_x = old_x + (@move_to_speed * x_component)
+    new_y = old_y + (@move_to_speed * y_component)
+
+    passed_x = ((new_x - @move_to_final_x) * (old_x - @move_to_final_x)) <= 0
+    passed_y = ((new_y - @move_to_final_x) * (old_y - @move_to_final_y)) <= 0
+    if (passed_x || passed_y)
+      new_x = @move_to_final_x
+      new_y = @move_to_final_y
+      remove_ticker(:do_move)
+    end
+    set_attribute(:x, new_x)
+    set_attribute(:y, new_y)
   end
 
   def change_map(map_name)

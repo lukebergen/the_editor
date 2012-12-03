@@ -16,7 +16,7 @@ module InputHandler
         do_debugger
       end
       if id == Gosu::MsLeft
-        result = @game.maps[@game.current_map].blocked?([[(mouse_x / 16).round, (mouse_y / 16).round]])
+        @game.objects.last.move_to(400, 400, 10)
       end
       @game.emit(message: :key_down, params: [InputHandler::KEY_MAP[id]])
     end
