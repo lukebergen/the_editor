@@ -9,6 +9,7 @@ def init
   listen_for(:key_down, :key_down)
   listen_for(:key_up, :key_up)
   listen_for(:map_change, :map_change)
+  listen_for(:collide, :on_collide)
 
   @img_form = "player_<dir>.png"
   @ani_form = "player_walk_<dir>"
@@ -17,6 +18,10 @@ end
 
 def post_json_init
   #set_animation("player_walk_down")
+end
+
+def on_collide(other=nil)
+  return true
 end
 
 def key_down(key)

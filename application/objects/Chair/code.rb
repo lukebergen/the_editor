@@ -8,9 +8,8 @@ def init
   @img_form = "chair.png"
   @ani_form = "player_walk_<dir>"
 
-  def collide(other_object)
-    puts "heyo"
-    return false
+  def collide(other_object=nil)
+    return true
   end
 
 end

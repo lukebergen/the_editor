@@ -9,12 +9,13 @@ game_objects = Dir.glob(File.join([APPLICATION_DIR, 'objects', '*', 'code.rb']))
 
 class Game
 
-  attr_accessor :objects, :current_map, :maps
+  attr_accessor :objects, :current_map, :maps, :debugger_time
 
   def initialize(maps)
     @objects = load_game_objects
     @current_map = "dev_area0101"
     @maps = maps
+    @debugger_time = false
   end
 
   def load_game_objects

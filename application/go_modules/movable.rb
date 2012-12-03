@@ -16,7 +16,6 @@ module Movable
       @last_dir = :down
       @ani_form = "#{self.class.to_s}_<dir>"
       @img_form = "#{self.class.to_s}_<dir>.png"
-      @on_tile_collision = :stop
     end
   end
 
@@ -85,12 +84,12 @@ module Movable
     new_x = old_x + (@dx * (@speed - (@dirs_moving.count / 1.3)))
     new_y = old_y + (@dy * (@speed - (@dirs_moving.count / 1.3)))
     if (has_module?('Collidable'))
-      do_x, do_y = collision_ok?(new_x, new_y)
+      blocked_x, blocked_y = collision_block?(new_x, new_y)
     else
-      do_x = do_y = true
+      blocked_x = blocked_y = false
     end
-    set_attribute(:x, new_x) if do_x
-    set_attribute(:y, new_y) if do_y
+    set_attribute(:x, new_x) unless blocked_x
+    set_attribute(:y, new_y) unless blocked_y
   end
 
   def check_edge_hit

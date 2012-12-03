@@ -15,6 +15,9 @@ module InputHandler
       if id == Gosu::KbD
         do_debugger
       end
+      if id == Gosu::KbX
+        @game.debugger_time = true
+      end
       if id == Gosu::MsLeft
         @game.objects.last.move_to(400, 400, 10)
       end
