@@ -8,7 +8,6 @@ class Renderer
     @window = window
     @media_manager = MediaManager.new(@window)
     @dialog_font = Gosu::Font.new(@window, Gosu::default_font_name, 20)
-    @mouse_img = Gosu::Image.new(@window, "#{APPLICATION_DIR}/media/system/mouse.png")
     @pre_rendered_maps = {}
     @neighbors = [[],[],[]]
     @current_map = nil

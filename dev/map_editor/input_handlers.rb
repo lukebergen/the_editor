@@ -13,7 +13,7 @@ module InputHandlers
     if id == Gosu::KbS
       notify("Saving")
       json = @map.to_json
-      File.open("./#{@file_path}.map", 'w') {|f| f.write(json)}
+      File.open(File.join(['.', "#{@file_path}.map"]), 'w') {|f| f.write(json)}
     end
     if id == Gosu::KbT
       @selecting_tile = true

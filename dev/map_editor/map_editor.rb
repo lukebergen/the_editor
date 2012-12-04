@@ -1,4 +1,4 @@
-APPLICATION_DIR = "./application"
+APPLICATION_DIR = File.join(['.', 'application'])
 require 'gosu'
 require 'json'
 require File.join([APPLICATION_DIR, "tileset.rb"])

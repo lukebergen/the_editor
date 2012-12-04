@@ -1,4 +1,4 @@
-APPLICATION_DIR ||= "./application"
+APPLICATION_DIR ||= File.join(['.', 'application'])
 require File.join([APPLICATION_DIR, 'game_object'])
 modules = Dir.glob(File.join([APPLICATION_DIR, 'go_modules', '**', '*.rb']))
 modules.each do |filename|

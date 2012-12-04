@@ -1,4 +1,4 @@
-APPLICATION_DIR = "./application"
+APPLICATION_DIR = File.join(['.', 'application'])
 require 'gosu'
 require 'debugger'
 require 'json'
