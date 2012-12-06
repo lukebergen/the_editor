@@ -12,34 +12,26 @@ class Game
   attr_accessor :objects, :current_map, :maps, :debugger_time
 
   def initialize(maps)
-    @objects = load_game_objects
+    @objects = []
+    load_game_objects
     @current_map = "dev_area0101"
     @maps = maps
     @debugger_time = false
   end
 
   def load_game_objects
-    objects = []
     paths = Dir.glob(File.join([APPLICATION_DIR, 'objects', '*']))
     paths.each do |path|
-      obj = load_game_object(path)
-      objects << obj
+      load_game_object_instances(path)
     end
-    return objects
   end
 
-  def load_game_object(path)
+  def load_game_object_instances(path)
     name = File.basename(path)
-    obj = GameObject.new(self, name)
-    code = File.read(File.join([path, 'code.rb']))
-    obj.code_string << code << "\n"
-    obj.instance_eval(code)
-    obj.init
-    json = File.read(File.join([path, 'data.json']))
-    hash = Utils.symbolize_keys(JSON::load(json))
-    obj.attributes = obj.attributes.merge(hash)
-    obj.post_json_init if obj.respond_to?(:post_json_init)
-    return obj
+    instances_path = File.join([path, 'instances', '*'])
+    Dir.glob(instances_path).each do |inst_path|
+      GameObject.spawn(self, name, inst_path)
+    end
   end
 
   def change_map(map_name)

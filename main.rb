@@ -1,5 +1,7 @@
 APPLICATION_DIR = File.join(['.', 'application'])
 require 'gosu'
+require 'digest'
+require 'fileutils'
 require 'debugger'
 require 'json'
 require 'texplay'

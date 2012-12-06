@@ -2,20 +2,54 @@ MODULES_DIR = File.join([APPLICATION_DIR, 'go_modules'])
 
 class GameObject
 
-  attr_accessor :modules, :attributes, :listeners, :name
+  attr_accessor :modules, :attributes, :listeners
   attr_reader :code_string
 
-  def initialize(game, name)
+  class << self
+    def spawn(game, name, inst_path=nil)
+      if inst_path
+        id = File.basename(inst_path)
+      else
+        id = Digest::SHA1.hexdigest(Random.rand.to_s)
+        class_path = File.join([APPLICATION_DIR, 'objects', name])
+        inst_path = File.join([class_path, 'instances', id])
+        Dir.mkdir(inst_path)
+        FileUtils.cp(File.join([class_path, 'code.rb']), File.join([inst_path, 'code.rb']))
+        FileUtils.cp(File.join([class_path, 'data.json']), File.join([inst_path, 'data.json']))
+      end
+      obj = GameObject.new(game, name, id)
+      code = File.read(File.join([inst_path, 'code.rb']))
+      obj.code_string << code << "\n"
+      obj.instance_eval(code)
+      obj.init
+      json = File.read(File.join([inst_path, 'data.json']))
+      hash = Utils.symbolize_keys(JSON::load(json))
+      obj.attributes = obj.attributes.merge(hash)
+      obj.post_json_init if obj.respond_to?(:post_json_init)
+      game.objects << obj
+      obj
+    end
+  end
+
+  def initialize(game, name, id)
     @game = game
-    @name = name
     @attributes = {}
     @listeners = {}
     @modules = []
+    set_attributes(name: name, id: id)
     @code_string = File.read(__FILE__).gsub(/^[ ]*/, '')
   end
 
   def add_attribute(name, value=nil)
     @attributes[name.to_sym] = value
+  end
+
+  def id
+    get_attribute(:id)
+  end
+
+  def name
+    get_attribute(:name)
   end
 
   def add_attributes(*names)

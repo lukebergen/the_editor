@@ -19,7 +19,9 @@ module InputHandler
         @game.debugger_time = true
       end
       if id == Gosu::MsLeft
-        @game.objects.last.move_to(400, 400, 10)
+        @game
+        obj = GameObject.spawn(@game, "Chair")
+        obj.set_attributes(x: mouse_x, y: mouse_y)
       end
       @game.emit(message: :key_down, params: [InputHandler::KEY_MAP[id]])
     end
