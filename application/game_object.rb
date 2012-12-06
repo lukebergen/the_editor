@@ -2,8 +2,7 @@ MODULES_DIR = File.join([APPLICATION_DIR, 'go_modules'])
 
 class GameObject
 
-  attr_accessor :modules, :attributes, :listeners
-  attr_reader :code_string
+  attr_accessor :modules, :attributes, :listeners, :code_string
 
   class << self
     def spawn(game, name, inst_path=nil)
@@ -19,7 +18,7 @@ class GameObject
       end
       obj = GameObject.new(game, name, id)
       code = File.read(File.join([inst_path, 'code.rb']))
-      obj.code_string << code << "\n"
+      obj.code_string = code.gsub($/, '')
       obj.instance_eval(code)
       obj.init
       json = File.read(File.join([inst_path, 'data.json']))
@@ -37,7 +36,6 @@ class GameObject
     @listeners = {}
     @modules = []
     set_attributes(name: name, id: id)
-    @code_string = File.read(__FILE__).gsub(/^[ ]*/, '')
   end
 
   def add_attribute(name, value=nil)
@@ -100,8 +98,6 @@ class GameObject
       required = (const::REQUIRES rescue [])
       add_modules(required)
       self.extend(const)
-      text = (File.read(File.join([MODULES_DIR, "#{mod_name}.rb"])) rescue '').gsub(/^[ ]*/, '')
-      @code_string << "\n" + text
       @modules << mod_name
     end
   end

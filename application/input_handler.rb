@@ -15,6 +15,15 @@ module InputHandler
       if id == Gosu::KbD
         do_debugger
       end
+      if id == Gosu::KbK
+        if (@game.mode == :play)
+          @game.set_mode(:edit)
+          @renderer.set_mode(:edit)
+        else
+          @game.set_mode(:play)
+          @renderer.set_mode(:play)
+        end
+      end
       if id == Gosu::KbX
         @game.debugger_time = true
       end

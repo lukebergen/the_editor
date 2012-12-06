@@ -8,4 +8,5 @@ class Constants
   TILE_SIZE = 16
   MAP_WIDTH = 64 * TILE_SIZE
   MAP_HEIGHT = 64 * TILE_SIZE
+  CODE_FONT_SIZE = 10
 end

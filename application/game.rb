@@ -9,7 +9,7 @@ game_objects = Dir.glob(File.join([APPLICATION_DIR, 'objects', '*', 'code.rb']))
 
 class Game
 
-  attr_accessor :objects, :current_map, :maps, :debugger_time
+  attr_accessor :objects, :current_map, :maps, :debugger_time, :mode
 
   def initialize(maps)
     @objects = []
@@ -17,6 +17,7 @@ class Game
     @current_map = "dev_area0101"
     @maps = maps
     @debugger_time = false
+    @mode = :play
   end
 
   def load_game_objects
@@ -47,22 +48,30 @@ class Game
   end
 
   def emit(hash, &block)
-    message = hash[:message]
-    params = hash[:params]
-    object_name = hash[:object]
-    last_result = nil
-    @objects.each do |obj|
-      next if object_name && obj.name != object_name
-      if (obj.listens_for?(message))
-        callback = obj.listeners[message]
-        last_result = obj.send(callback, *params, &block)
+    if (@mode == :play)
+      message = hash[:message]
+      params = hash[:params]
+      object_name = hash[:object]
+      last_result = nil
+      @objects.each do |obj|
+        next if object_name && obj.name != object_name
+        if (obj.listens_for?(message))
+          callback = obj.listeners[message]
+          last_result = obj.send(callback, *params, &block)
+        end
       end
+      last_result
     end
-    last_result
+  end
+
+  def set_mode(m)
+    @mode = m
   end
 
   def tick
-    tick_objects
+    if (@mode == :play)
+      tick_objects
+    end
   end
 
   def tick_objects

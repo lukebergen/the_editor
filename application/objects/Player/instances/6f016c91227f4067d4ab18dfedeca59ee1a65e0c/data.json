@@ -1,8 +1,1 @@
-{
-  "x":100,
-  "y":100,
-  "height":48,
-  "width":48,
-  "current_image":"player_down.png",
-  "current_map":"dev_area0101"
-}
+{"name":"Player","id":"6f016c91227f4067d4ab18dfedeca59ee1a65e0c","x":467.69230769230745,"y":366.1538461538459,"z":null,"height":48,"width":48,"current_image":"player_down.png","dir":"down","has_focus":true,"current_map":"dev_area0101"}
