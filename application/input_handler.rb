@@ -18,10 +18,10 @@ module InputHandler
       if id == Gosu::KbK
         if (@game.mode == :play)
           @game.set_mode(:edit)
-          @renderer.set_mode(:edit)
+          @renderer = @edit_renderer
         else
           @game.set_mode(:play)
-          @renderer.set_mode(:play)
+          @renderer = @play_renderer
         end
       end
       if id == Gosu::KbX

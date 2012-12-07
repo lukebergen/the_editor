@@ -9,7 +9,9 @@ require File.join([APPLICATION_DIR, 'game'])
 require File.join([APPLICATION_DIR, 'media_manager'])
 require File.join([APPLICATION_DIR, 'constants'])
 require File.join([APPLICATION_DIR, 'input_handler'])
-require File.join([APPLICATION_DIR, 'renderer'])
+require File.join([APPLICATION_DIR, 'renderers', 'base'])
+require File.join([APPLICATION_DIR, 'renderers', 'edit_renderer'])
+require File.join([APPLICATION_DIR, 'renderers', 'play_renderer'])
 require File.join([APPLICATION_DIR, 'tileset'])
 require File.join([APPLICATION_DIR, 'map'])
 require File.join([APPLICATION_DIR, 'animation'])
@@ -24,7 +26,9 @@ class GameWindow < Gosu::Window
   def initialize
     super 1280, 800, false
     self.caption = "The Editor"
-    @renderer = Renderer.new(self)
+    @play_renderer = PlayRenderer.new(self)
+    @edit_renderer = EditRenderer.new(self)
+    @renderer = @play_renderer
     @game = Game.new(@renderer.media_manager.maps)
   end
 
