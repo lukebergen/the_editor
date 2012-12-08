@@ -9,34 +9,38 @@ module InputHandler
   def self.included(klass)
 
     def button_down(id)
-      if id == Gosu::KbEscape
-        close
+      params = {key: InputHandler::KEY_MAP[id]}
+      case id
+        when Gosu::KbEscape
+          close
+
+        when Gosu::KbD
+          do_debugger
+
+        when Gosu::KbK
+          if (@game.mode == :play)
+            @game.set_mode(:edit)
+            @renderer = @edit_renderer
+          else
+            @game.set_mode(:play)
+            @renderer = @play_renderer
+          end
+
+        when Gosu::KbX
+          @game.debugger_time = true
+
+        when Gosu::MsLeft
+          params[:mouse] = {x: mouse_x, y: mouse_y}
+
+        when Gosu::MsRight
+          params[:mouse] = {x: mouse_x, y: mouse_y}
+
       end
-      if id == Gosu::KbD
-        do_debugger
-      end
-      if id == Gosu::KbK
-        if (@game.mode == :play)
-          @game.set_mode(:edit)
-          @renderer = @edit_renderer
-        else
-          @game.set_mode(:play)
-          @renderer = @play_renderer
-        end
-      end
-      if id == Gosu::KbX
-        @game.debugger_time = true
-      end
-      if id == Gosu::MsLeft
-        @game
-        obj = GameObject.spawn(@game, "Chair")
-        obj.set_attributes(x: mouse_x, y: mouse_y)
-      end
-      @game.emit(message: :key_down, params: [InputHandler::KEY_MAP[id]])
+      @game.emit(message: :key_down, params: params)
     end
 
     def button_up(id)
-      @game.emit(message: :key_up, params: [InputHandler::KEY_MAP[id]])
+      @game.emit(message: :key_up, params: {key: InputHandler::KEY_MAP[id]})
     end
 
   end

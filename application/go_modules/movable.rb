@@ -19,7 +19,8 @@ module Movable
     end
   end
 
-  def start_move(dir)
+  def start_move(params)
+    dir = params[:dir]
     case dir
     when :up
       @dirs_moving << :up
@@ -40,7 +41,8 @@ module Movable
     end
   end
 
-  def stop_move(dir)
+  def stop_move(params)
+    dir = params[:dir]
     case dir
     when :up
       set_attribute(:dir, :up)

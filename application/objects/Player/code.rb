@@ -24,33 +24,35 @@ def on_collide(other=nil)
   return true
 end
 
-def key_down(key)
+def key_down(params)
+  key = params[:key]
   case key
   when :KbUp
-    emit(object_id: self.id, message: :start_move, params: [:up])
+    emit(object_id: self.id, message: :start_move, params: {dir: :up})
   when :KbDown
-    emit(object_id: self.id, message: :start_move, params: [:down])
+    emit(object_id: self.id, message: :start_move, params: {dir: :down})
   when :KbLeft
-    emit(object_id: self.id, message: :start_move, params: [:left])
+    emit(object_id: self.id, message: :start_move, params: {dir: :left})
   when :KbRight
-    emit(object_id: self.id, message: :start_move, params: [:right])
+    emit(object_id: self.id, message: :start_move, params: {dir: :right})
   when :KbSpace
-    emit(object_name: 'Chair', message: :start_move, params: [:right])
+    emit(object_name: 'Chair', message: :start_move, params: {dir: :right})
   end
 end
 
-def key_up(key)
+def key_up(params)
+  key = params[:key]
   case key
   when :KbUp
-    emit(object_id: self.id, message: :stop_move, params: [:up])
+    emit(object_id: self.id, message: :stop_move, params: {dir: :up})
   when :KbDown
-    emit(object_id: self.id, message: :stop_move, params: [:down])
+    emit(object_id: self.id, message: :stop_move, params: {dir: :down})
   when :KbLeft
-    emit(object_id: self.id, message: :stop_move, params: [:left])
+    emit(object_id: self.id, message: :stop_move, params: {dir: :left})
   when :KbRight
-    emit(object_id: self.id, message: :stop_move, params: [:right])
+    emit(object_id: self.id, message: :stop_move, params: {dir: :right})
   when :KbSpace
-    emit(object_name: 'Chair', message: :stop_move, params: [:right])
+    emit(object_name: 'Chair', message: :stop_move, params: {dir: :right})
   end
 
   def map_change(map_name)
