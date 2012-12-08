@@ -55,7 +55,8 @@ def key_up(params)
     emit(object_name: 'Chair', message: :stop_move, params: {dir: :right})
   end
 
-  def map_change(map_name)
+  def map_change(params)
+    map_name = params[:name]
     @game.change_map(map_name)
   end
 end
