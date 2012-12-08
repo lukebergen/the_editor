@@ -2,7 +2,7 @@ module InputHandler
 
   KEY_MAP = {}
   consts = Gosu.constants.select {|k| k[0..1] == "Kb" || k[0..1] == "Ms"}
-  consts.each do |const|
+  (consts - [:KbNum, :KbRangeBegin, :MsRangeBegin, :KbNum, :MsNum]).each do |const|
     KEY_MAP[Gosu.const_get(const)] = const.to_sym
   end
 
@@ -30,17 +30,25 @@ module InputHandler
           @game.debugger_time = true
 
         when Gosu::MsLeft
-          params[:mouse] = {x: mouse_x, y: mouse_y}
+          params[:mouse] = window_pos_to_game_pos(mouse_x, mouse_y)
 
         when Gosu::MsRight
-          params[:mouse] = {x: mouse_x, y: mouse_y}
+          params[:mouse] = window_pos_to_game_pos(mouse_x, mouse_y)
 
       end
       @game.emit(message: :key_down, params: params)
     end
 
     def button_up(id)
-      @game.emit(message: :key_up, params: {key: InputHandler::KEY_MAP[id]})
+      params = {key: InputHandler::KEY_MAP[id]}
+      case id
+        when Gosu::MsLeft
+            params[:mouse] = window_pos_to_game_pos(mouse_x, mouse_y)
+
+        when Gosu::MsRight
+          params[:mouse] = window_pos_to_game_pos(mouse_x, mouse_y)
+      end
+      @game.emit(message: :key_up, params: params)
     end
 
   end

@@ -32,7 +32,6 @@ class PlayRenderer < Renderer::Base
       if (height || width)
         fx, fy = stretch_factor(current_image, height, width)
       end
-      #puts "drawing: #{go.id}: #{x}, #{y}, #{z}"
       current_image.draw(x, y, z, fx, fy)
     end
   end

@@ -26,6 +26,10 @@ module Renderer
       @@focus
     end
 
+    def neighbors
+      @@neighbors
+    end
+
     def paint(game)
       set_background
       render_game_objects(game.objects)

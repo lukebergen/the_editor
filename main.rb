@@ -5,6 +5,11 @@ require 'fileutils'
 require 'debugger'
 require 'json'
 require 'texplay'
+
+Dir.glob(File.join([APPLICATION_DIR, 'helpers', '*.rb'])).each do |helper_path|
+  require helper_path
+end
+
 require File.join([APPLICATION_DIR, 'game'])
 require File.join([APPLICATION_DIR, 'media_manager'])
 require File.join([APPLICATION_DIR, 'constants'])
@@ -54,6 +59,27 @@ class GameWindow < Gosu::Window
 
   def reload!
     exec("ruby main.rb console")
+  end
+
+  def window_pos_to_game_pos(win_x, win_y)
+    game_x = game_y = map_name = nil
+
+    focus_offset_x = (self.width / 2.0) - @renderer.focus[0]
+    focus_offset_y = (self.height / 2.0) - @renderer.focus[1]
+
+    game_x = (win_x - focus_offset_x) % Constants::MAP_WIDTH
+    game_y = (win_y - focus_offset_y) % Constants::MAP_HEIGHT
+
+    map_offset_x = ((win_x - focus_offset_x) / Constants::MAP_WIDTH).floor + 1
+    map_offset_y = ((win_y - focus_offset_y) / Constants::MAP_HEIGHT).floor + 1
+
+    if (@renderer.neighbors[map_offset_y])
+      if @renderer.neighbors[map_offset_y][map_offset_x]
+        game_map = @renderer.neighbors[map_offset_y][map_offset_x][:name]
+      end
+    end
+
+    {map: game_map, x: game_x, y: game_y}
   end
 
 end
