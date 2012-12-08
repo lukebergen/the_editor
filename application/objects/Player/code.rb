@@ -27,30 +27,30 @@ end
 def key_down(key)
   case key
   when :KbUp
-    emit(object: 'Player', message: :start_move, params: [:up])
+    emit(object_id: self.id, message: :start_move, params: [:up])
   when :KbDown
-    emit(object: 'Player', message: :start_move, params: [:down])
+    emit(object_id: self.id, message: :start_move, params: [:down])
   when :KbLeft
-    emit(object: 'Player', message: :start_move, params: [:left])
+    emit(object_id: self.id, message: :start_move, params: [:left])
   when :KbRight
-    emit(object: 'Player', message: :start_move, params: [:right])
+    emit(object_id: self.id, message: :start_move, params: [:right])
   when :KbSpace
-    emit(object: 'Chair', message: :start_move, params: [:right])
+    emit(object_name: 'Chair', message: :start_move, params: [:right])
   end
 end
 
 def key_up(key)
   case key
   when :KbUp
-    emit(object: 'Player', message: :stop_move, params: [:up])
+    emit(object_id: self.id, message: :stop_move, params: [:up])
   when :KbDown
-    emit(object: 'Player', message: :stop_move, params: [:down])
+    emit(object_id: self.id, message: :stop_move, params: [:down])
   when :KbLeft
-    emit(object: 'Player', message: :stop_move, params: [:left])
+    emit(object_id: self.id, message: :stop_move, params: [:left])
   when :KbRight
-    emit(object: 'Player', message: :stop_move, params: [:right])
+    emit(object_id: self.id, message: :stop_move, params: [:right])
   when :KbSpace
-    emit(object: 'Chair', message: :stop_move, params: [:right])
+    emit(object_name: 'Chair', message: :stop_move, params: [:right])
   end
 
   def map_change(map_name)

@@ -51,16 +51,18 @@ class Game
     if (@mode == :play)
       message = hash[:message]
       params = hash[:params]
-      object_name = hash[:object]
-      last_result = nil
+      object_name = hash[:object_name]
+      object_id = hash[:object_id]
+      results = []
       @objects.each do |obj|
         next if object_name && obj.name != object_name
+        next if object_id && obj.id != object_id
         if (obj.listens_for?(message))
           callback = obj.listeners[message]
-          last_result = obj.send(callback, *params, &block)
+          results << obj.send(callback, *params, &block)
         end
       end
-      last_result
+      results
     end
   end
 

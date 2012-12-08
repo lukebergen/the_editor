@@ -44,7 +44,7 @@ module Collidable
         end
         unless (with_x_shift & other_arr).empty?
           if other.listens_for?(:collide)
-            tile_block_x = @game.emit(object: other.name, message: :collide, params: [self.name])
+            tile_block_x = @game.emit(object_id: other.id, message: :collide, params: [self.name])
           else
             tile_block_x = true
           end
@@ -63,7 +63,7 @@ module Collidable
         end
         unless (with_y_shift & other_arr).empty?
           if other.listens_for?(:collide)
-            tile_block_y = @game.emit(object: other.name, message: :collide, params: [self.name])
+            tile_block_y = @game.emit(object_id: other.id, message: :collide, params: [self.name])
           else
             tile_block_y = true
           end
@@ -87,7 +87,7 @@ module Collidable
   def collide(obj = :tile)
     puts self.name
     if (obj != :tile)
-      emit(object: obj.name, message: collide, params: [self.name])
+      emit(object_id: obj.id, message: collide, params: [self.name])
     end
   end
 

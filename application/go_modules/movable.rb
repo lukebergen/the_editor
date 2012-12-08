@@ -198,7 +198,7 @@ module Movable
 
   def change_map(map_name)
     self.set_attribute(:current_map, map_name)
-    emit({object: self.name, message: :map_change, params: [map_name]})
+    emit({object_id: self.id, message: :map_change, params: [map_name]})
   end
 
 end
