@@ -25,9 +25,19 @@ module GameHelper
     results
   end
 
-  # BOOKMARK  
-  def object_at(map_name, x, y)
-    puts "checking at #{map_name}, #{x}, #{y}"
+  def objects_at(map_name, x, y)
+    results = []
+    map_objects = @objects.select do |obj|
+      obj.has_module?('Locationable') &&
+      obj.get_attribute(:current_map) == map_name
+    end
+    map_objects.each do |obj|
+      if (x > obj.get_attribute(:x) && x < obj.get_attribute(:x) + obj.get_attribute(:width) &&
+          y > obj.get_attribute(:y) && y < obj.get_attribute(:y) + obj.get_attribute(:height))
+        results << obj
+      end
+    end
+    results
   end
 
   def tick_objects
@@ -40,10 +50,18 @@ module GameHelper
 
   def handle_edit_input(hash)
     return if hash[:message] == :key_up
+
     case hash[:params][:key]
-      when :MsLeft
-        obj = object_at(hash[:params][:mouse][:map], hash[:params][:mouse][:x], hash[:params][:mouse][:y])
+    when :MsLeft
+      map = hash[:params][:mouse][:map]
+      x = hash[:params][:mouse][:x]
+      y = hash[:params][:mouse][:y]
+      obj = objects_at(map, x, y).first
+      if (obj && obj.id && obj.id != '')
+        @currently_editing_object = obj.id
+      end
     end
+
   end
 
   def set_mode(m)
