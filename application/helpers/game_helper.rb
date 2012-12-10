@@ -48,9 +48,14 @@ module GameHelper
     end
   end
 
-  def handle_edit_input(hash)
-    return if hash[:message] == :key_up
+  def handle_edit_message(hash)
+    case hash[:message]
+    when :key_down
+      handle_edit_key_down(hash)
+    end
+  end
 
+  def handle_edit_key_down(hash)
     case hash[:params][:key]
     when :MsLeft
       map = hash[:params][:mouse][:map]
@@ -66,6 +71,9 @@ module GameHelper
 
   def set_mode(m)
     @mode = m
+    if (@mode == :play)
+      @currently_editing_object = nil
+    end
   end
 
   def change_map(map_name)

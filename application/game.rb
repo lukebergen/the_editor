@@ -41,7 +41,7 @@ class Game
     if (@mode == :play)
       emit_to_objects(hash, &block)
     else
-      handle_edit_input(hash)
+      handle_edit_message(hash)
     end
   end
 
