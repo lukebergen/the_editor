@@ -12,7 +12,9 @@ module InputHandler
       params = {key: InputHandler::KEY_MAP[id]}
       case id
         when Gosu::KbEscape
+          clear_game_states
           close
+          exit
 
         when Gosu::KbD
           do_debugger
@@ -20,14 +22,16 @@ module InputHandler
         when Gosu::KbK
           if (@game.mode == :play)
             @game.set_mode(:edit)
-            @renderer = @edit_renderer
+            # @renderer = @edit_renderer
+            push_game_state $editing_state
           else
             @game.set_mode(:play)
-            @renderer = @play_renderer
+            # @renderer = @play_renderer
+            pop_game_state
           end
 
         when Gosu::KbX
-          @game.debugger_time = true
+          puts "for stuff"
 
         when Gosu::MsLeft
           params[:mouse] = window_pos_to_game_pos(mouse_x, mouse_y)

@@ -29,6 +29,7 @@ class EditRenderer < Renderer::Base
   end
 
   def render_object(go, x, y, z)
+    z = z == 0 ? -1 : -1 / z.to_f
     height = go.attributes[:height]
     width = go.attributes[:width]
     lines = @code_string_objects[go.id][:lines] || []

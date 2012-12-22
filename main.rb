@@ -1,5 +1,7 @@
 APPLICATION_DIR = File.join(['.', 'application'])
 require 'gosu'
+require 'chingu'
+require 'fidgit'
 require 'digest'
 require 'fileutils'
 require 'debugger'
@@ -17,14 +19,16 @@ require File.join([APPLICATION_DIR, 'input_handler'])
 require File.join([APPLICATION_DIR, 'renderers', 'base'])
 require File.join([APPLICATION_DIR, 'renderers', 'edit_renderer'])
 require File.join([APPLICATION_DIR, 'renderers', 'play_renderer'])
+require File.join([APPLICATION_DIR, 'game_states', 'main_view'])
+require File.join([APPLICATION_DIR, 'game_states', 'edit_view'])
 require File.join([APPLICATION_DIR, 'tileset'])
 require File.join([APPLICATION_DIR, 'map'])
 require File.join([APPLICATION_DIR, 'animation'])
 require File.join([APPLICATION_DIR, 'utils'])
 
-class GameWindow < Gosu::Window
+class GameWindow < Chingu::Window
   
-  include InputHandler
+  # include InputHandler
 
   attr_accessor :renderer
 
@@ -35,18 +39,23 @@ class GameWindow < Gosu::Window
     @edit_renderer = EditRenderer.new(self)
     @renderer = @play_renderer
     @game = Game.new(@renderer.media_manager.maps)
+
+    $playing_state = MainView.new(@game, @play_renderer)
+    $editing_state = EditView.new(@game, @edit_renderer)
+
+    push_game_state $playing_state
   end
 
-  def update
-    @game.tick
-    @renderer.tick(@game)
-    @fps = "fps: #{Gosu::fps}"
-  end
+  # def update
+  #   @game.tick
+  #   @renderer.tick(@game)
+  #   @fps = "fps: #{Gosu::fps}"
+  # end
 
-  def draw
-    @renderer.paint(@game)
-    @renderer.draw_text(@fps)
-  end
+  # def draw
+  #   @renderer.paint(@game)
+  #   @renderer.draw_text(@fps)
+  # end
 
   def needs_cursor?
     true

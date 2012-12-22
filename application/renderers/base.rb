@@ -138,7 +138,7 @@ module Renderer
       window.draw_quad(0, 0, w, 
                         window.width, 0, w,
                         window.width, window.height, w,
-                        0, window.height, w)
+                        0, window.height, w, -1000)
     end
 
   end
