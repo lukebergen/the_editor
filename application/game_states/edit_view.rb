@@ -42,9 +42,6 @@ class EditView < Fidgit::GuiState
       else
         super(id)
       end
-    when Gosu::KbK
-      @game.set_mode(:play)
-      pop_game_state
     when Gosu::KbX
       @obj_attributes[0][:input].text = "test"
     else
@@ -59,10 +56,11 @@ class EditView < Fidgit::GuiState
     n = 0
     object.attributes.each do |key, value|
       key = key.to_s
-      value = value.to_s
       next if ['name', 'id', ''].include?(key)
+      value = 'nil' unless value
       @obj_attributes[n][:label].text = key
       @obj_attributes[n][:input].text = value
+      @obj_attributes[n][:original_class] = value.class
       n += 1
     end
   end
@@ -78,19 +76,48 @@ class EditView < Fidgit::GuiState
     vertical align_h: :right, alighn_h: :top do
       scroll_window(
         width: 400,
-        height: $window.height,
+        height: $window.height - 100,
         background_color: Gosu::Color::BLACK,
         align_h: :right
         ) do
-        @object_id_label = label 'test', background_color: Gosu::Color::BLACK, font_height: 20
-        @object_name_label = label "test", background_color: Gosu::Color::BLACK, font_height: 30
+        @object_id_label = label 'test', background_color: Gosu::Color::BLACK, font_height: 18
+        @object_name_label = label "test", background_color: Gosu::Color::BLACK, font_height: 25
 
         @obj_attributes.each do |attr_hash|
           attr_hash[:label] = label '', background_color: Gosu::Color::BLACK, font_height: 20
           attr_hash[:input] = text_area text: '', width: 300, editable: true, font: @edit_font
         end
       end
+      horizontal do
+        button "Save" do
+          close_edit_mode(with_save: true)
+        end
+        button "Close" do
+          close_edit_mode
+        end
+      end
     end
+  end
+
+  def close_edit_mode(opts = {})
+    opts = {with_save: false}.merge(opts)
+    if (opts[:with_save] && @current_object)
+      @obj_attributes.each do |attr_hash|
+        key = attr_hash[:label].text.to_sym
+        value = attr_hash[:input].text
+        if (attr_hash[:original_class] == Symbol)
+          value = value.to_sym
+        elsif (attr_hash[:original_class] == Fixnum)
+          value = value.to_i
+        elsif (attr_hash[:original_class] == Float)
+          value = value.to_f
+        end
+        value = nil if value == 'nil'
+        @current_object.set_attribute(key, value)
+      end
+    end
+    @game.set_mode(:play)
+    pop_game_state
   end
 
 end
