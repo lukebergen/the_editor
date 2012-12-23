@@ -30,7 +30,7 @@ class GameWindow < Chingu::Window
   
   # include InputHandler
 
-  attr_accessor :renderer
+  attr_accessor :renderer, :game
 
   def initialize
     super 1280, 800, false

@@ -34,10 +34,12 @@ module InputHandler
           puts "for stuff"
 
         when Gosu::MsLeft
-          params[:mouse] = window_pos_to_game_pos(mouse_x, mouse_y)
+          obj = GameObject.spawn($window.game, "Chair")
+          obj.set_attributes(x: $window.mouse_x, y: $window.mouse_y)
+          # params[:mouse] = window_pos_to_game_pos(mouse_x, mouse_y)
 
         when Gosu::MsRight
-          params[:mouse] = window_pos_to_game_pos(mouse_x, mouse_y)
+          # params[:mouse] = window_pos_to_game_pos(mouse_x, mouse_y)
 
       end
       @game.emit(message: :key_down, params: params)
@@ -47,10 +49,10 @@ module InputHandler
       params = {key: InputHandler::KEY_MAP[id]}
       case id
         when Gosu::MsLeft
-            params[:mouse] = window_pos_to_game_pos(mouse_x, mouse_y)
+          # params[:mouse] = window_pos_to_game_pos(mouse_x, mouse_y)
 
         when Gosu::MsRight
-          params[:mouse] = window_pos_to_game_pos(mouse_x, mouse_y)
+          # params[:mouse] = window_pos_to_game_pos(mouse_x, mouse_y)
       end
       @game.emit(message: :key_up, params: params)
     end
