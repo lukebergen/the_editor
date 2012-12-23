@@ -78,7 +78,7 @@ module Collidable
     my_coords = []
     (0..tile_width).each do |row_diff|
       (0..tile_height).each do |col_diff|
-        my_coords << [tile_x(next_x) + col_diff, tile_y(next_y) + row_diff]
+        my_coords << [tile_x(next_x) + row_diff, tile_y(next_y) + col_diff]
       end
     end
     my_coords
