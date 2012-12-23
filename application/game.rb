@@ -37,6 +37,15 @@ class Game
     end
   end
 
+  def object(identifier)
+    if (GameObject.is_id?(identifier))
+      objects = @objects.select {|x| x.id == identifier}
+      return objects.first
+    else
+      return @objects.select {|x| x.name == identifier}
+    end
+  end
+
   def emit(hash, &block)
     if (@mode == :play)
       emit_to_objects(hash, &block)

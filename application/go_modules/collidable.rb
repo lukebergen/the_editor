@@ -19,7 +19,6 @@ module Collidable
   end
 
   def collision_block?(new_x, new_y)
-    debugger if (@game.debugger_time)
     old_tiles = next_move_tiles(get_attribute(:x), get_attribute(:y))
     with_x_shift = next_move_tiles(new_x, get_attribute(:y))
     with_y_shift = next_move_tiles(get_attribute(:x), new_y)
@@ -89,7 +88,7 @@ module Collidable
   def collide(obj = :tile)
     puts self.name
     if (obj != :tile)
-      emit(object_id: obj.id, message: collide, params: [self.name])
+      emit(object_id: obj.id, message: collide, params: [self.id])
     end
   end
 

@@ -28,6 +28,10 @@ class GameObject
       game.objects << obj
       obj
     end
+
+    def is_id?(str)
+      str.size == 40 && str.gsub(/[0-9abcdef]/, '') == ''
+    end
   end
 
   def initialize(game, name, id)
