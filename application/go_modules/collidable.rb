@@ -36,6 +36,7 @@ module Collidable
     tile_block_x = @game.maps[get_attribute(:current_map)].blocked?(with_x_shift)
     unless tile_block_x
       (@game.objects - [self]).each do |other|
+        next unless other.get_attribute(:current_map) == self.get_attribute(:current_map)
         other_arr = []
         (0..other.tile_width).each do |w|
           (0..other.tile_height).each do |h|
@@ -55,6 +56,7 @@ module Collidable
     tile_block_y = @game.maps[get_attribute(:current_map)].blocked?(with_y_shift)
     unless tile_block_x
       (@game.objects - [self]).each do |other|
+        next unless other.get_attribute(:current_map) == self.get_attribute(:current_map)
         other_arr = []
         (0..other.tile_width).each do |w|
           (0..other.tile_height).each do |h|
