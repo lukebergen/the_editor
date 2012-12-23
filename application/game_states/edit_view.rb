@@ -42,6 +42,8 @@ class EditView < Fidgit::GuiState
       else
         super(id)
       end
+    when Gosu::KbK
+      close_edit_mode
     when Gosu::KbX
       @obj_attributes[0][:input].text = "test"
     else
