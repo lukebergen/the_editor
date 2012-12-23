@@ -70,8 +70,13 @@ class GameWindow < Chingu::Window
     exec("ruby main.rb console")
   end
 
+  def game_objects_at(win_x, win_y)
+    game_mouse = window_pos_to_game_pos(win_x, win_y)
+    @game.objects_at(game_mouse[:map], game_mouse[:x], game_mouse[:y])
+  end
+
   def window_pos_to_game_pos(win_x, win_y)
-    game_x = game_y = map_name = nil
+    game_x = game_y = game_map = nil
 
     focus_offset_x = (self.width / 2.0) - @renderer.focus[0]
     focus_offset_y = (self.height / 2.0) - @renderer.focus[1]
