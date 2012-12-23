@@ -8,7 +8,11 @@ def init
   @img_form = "chair.png"
   @ani_form = "player_walk_<dir>"
 
-  def collide(other_object=nil)
+  def collide(params)
+    other_id = params[0]
+    other_object = @game.object(other_id)
+
+    # returns true if the result of the collision (for the other object) is "I am blocking you"
     return true
   end
 
