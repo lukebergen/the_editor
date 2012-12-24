@@ -9,7 +9,7 @@ module Movable
       listen_for(:stop_move, :stop_move)
       add_ticker(:move)
       add_ticker(:check_edge_hit)
-      @speed = 10.0
+      set_attribute(:speed, 10.0)
       @dx = 0
       @dy = 0
       @dirs_moving = []
@@ -83,8 +83,8 @@ module Movable
     return if @dx == 0 && @dy == 0
     old_x = get_attribute(:x)
     old_y = get_attribute(:y)
-    new_x = old_x + (@dx * (@speed - (@dirs_moving.count / 1.3)))
-    new_y = old_y + (@dy * (@speed - (@dirs_moving.count / 1.3)))
+    new_x = old_x + (@dx * (get_attribute(:speed) - (@dirs_moving.count / 1.3)))
+    new_y = old_y + (@dy * (get_attribute(:speed) - (@dirs_moving.count / 1.3)))
     if (has_module?('Collidable'))
       blocked_x, blocked_y = collision_block?(new_x, new_y)
     else
