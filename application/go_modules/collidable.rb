@@ -30,10 +30,38 @@ module Collidable
       return [false, false]
     end
 
-    tile_block_x = tile_block_y = false
+    result = [false, false]
 
-    tile_block_x = @game.maps[get_attribute(:current_map)].blocked?(with_x_shift)
-    unless tile_block_x
+    collision_objects = collision_at?(with_x_shift)
+    if (collision_objects)
+      if (collision_objects == :tile)
+        result[0] = true
+      else
+        collision_objects.each do |other|
+          result[0] ||= @game.emit(object_id: other.id, message: :collide, params: {other_id: self.id})
+        end
+      end
+    end
+
+    collision_objects = collision_at?(with_y_shift)
+    if (collision_objects)
+      if (collision_objects == :tile)
+        result[1] = true
+      else
+        collision_objects.each do |other|
+          result[1] = @game.emit(object_id: other.id, message: :collide, params: {other_id: self.id})
+        end
+      end
+    end
+
+    result
+  end
+
+  def collision_at?(points)
+    if @game.maps[get_attribute(:current_map)].blocked?(points)
+      return :tile
+    else
+      result = []
       (@game.objects - [self]).each do |other|
         next unless other.get_attribute(:current_map) == self.get_attribute(:current_map)
         other_arr = []
@@ -42,37 +70,13 @@ module Collidable
             other_arr << [other.tile_x + w, other.tile_y + h]
           end
         end
-        unless (with_x_shift & other_arr).empty?
-          if other.listens_for?(:collide)
-            tile_block_x = @game.emit(object_id: other.id, message: :collide, params: [self.name])
-          else
-            tile_block_x = true
-          end
+        unless (points & other_arr).empty?
+          result << other
         end
       end
+      result = nil if result.count == 0
+      return result
     end
-
-    tile_block_y = @game.maps[get_attribute(:current_map)].blocked?(with_y_shift)
-    unless tile_block_x
-      (@game.objects - [self]).each do |other|
-        next unless other.get_attribute(:current_map) == self.get_attribute(:current_map)
-        other_arr = []
-        (0..other.tile_width).each do |w|
-          (0..other.tile_height).each do |h|
-            other_arr << [other.tile_x + w, other.tile_y + h]
-          end
-        end
-        unless (with_y_shift & other_arr).empty?
-          if other.listens_for?(:collide)
-            tile_block_y = @game.emit(object_id: other.id, message: :collide, params: [self.name])
-          else
-            tile_block_y = true
-          end
-        end
-      end
-    end
-
-    [tile_block_x, tile_block_y]
   end
 
   def next_move_tiles(next_x = get_attribute(:x), next_y = get_attribute(:y))
