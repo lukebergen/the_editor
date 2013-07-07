@@ -41,7 +41,7 @@ module Collidable
       else
         obj = collision_object[:object]
         x = obj.get_attribute(:x)
-        # result[0] = [x, x + obj.get_attribute(:width)] if obj.is_blocking?
+        result[0] = [x, x + obj.get_attribute(:width)] if obj.is_blocking?
       end
     end
 
