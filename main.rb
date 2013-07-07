@@ -61,11 +61,6 @@ class GameWindow < Chingu::Window
     true
   end
 
-  def do_debugger
-    debugger
-    noop = nil
-  end
-
   def reload!
     exec("ruby main.rb console")
   end

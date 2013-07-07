@@ -83,15 +83,36 @@ module Movable
     return if @dx == 0 && @dy == 0
     old_x = get_attribute(:x)
     old_y = get_attribute(:y)
-    new_x = old_x + (@dx * (get_attribute(:speed) - (@dirs_moving.count / 1.3)))
-    new_y = old_y + (@dy * (get_attribute(:speed) - (@dirs_moving.count / 1.3)))
+    new_x = old_x + (@dx * (get_attribute(:speed) - (@dirs_moving.count * 1.0)))
+    new_y = old_y + (@dy * (get_attribute(:speed) - (@dirs_moving.count * 1.0)))
+    
+    blocked_x = blocked_y = false
     if (has_module?('Collidable'))
       blocked_x, blocked_y = collision_block?(new_x, new_y)
-    else
-      blocked_x = blocked_y = false
+      if (blocked_x)
+        if (new_x + get_attribute(:width) >= blocked_x[0] &&
+            old_x + get_attribute(:width) < blocked_x[0])
+          new_x = blocked_x[0] - 1 - get_attribute(:width)
+        end
+        if (new_x <= blocked_x[1] && old_x > blocked_x[1])
+          new_x = blocked_x[1] + 1
+        end
+      end
+
+      if (blocked_y)
+        if (new_y + get_attribute(:height) >= blocked_y[0]) &&
+           (old_y + get_attribute(:height) < blocked_y[0])
+          new_y = blocked_y[0] - 1 - get_attribute(:height)
+        end
+        if (new_y <= blocked_y[1] && old_y > blocked_y[1])
+          new_y = blocked_y[1] + 1
+        end
+      end
+
     end
-    set_attribute(:x, new_x) unless blocked_x
-    set_attribute(:y, new_y) unless blocked_y
+
+    set_attribute(:x, new_x)
+    set_attribute(:y, new_y)
   end
 
   def check_edge_hit
@@ -119,7 +140,6 @@ module Movable
     when :left
       if (map.neighbors[:left])
         self.set_attribute(:x, Constants::MAP_WIDTH)
-        self.set_attribute(:current_map, map.neighbors[:left])
         change_map(map.neighbors[:left])
       else
         if (options[:on_world_edge] == :stop)
@@ -131,7 +151,6 @@ module Movable
     when :top
       if (map.neighbors[:top])
         self.set_attribute(:y, Constants::MAP_HEIGHT)
-        self.set_attribute(:current_map, map.neighbors[:top])
         change_map(map.neighbors[:top])
       else
         if (options[:on_world_edge] == :stop)
@@ -143,7 +162,6 @@ module Movable
     when :right
       if (map.neighbors[:right])
         self.set_attribute(:x, 0)
-        self.set_attribute(:current_map, map.neighbors[:right])
         change_map(map.neighbors[:right])
       else
         if (options[:on_world_edge] == :stop)
@@ -155,7 +173,6 @@ module Movable
     when :bottom
       if (map.neighbors[:bottom])
         self.set_attribute(:y, 0)
-        self.set_attribute(:current_map, map.neighbors[:bottom])
         change_map(map.neighbors[:bottom])
       else
         if (options[:on_world_edge] == :stop)

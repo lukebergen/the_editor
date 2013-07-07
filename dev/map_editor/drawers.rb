@@ -70,6 +70,7 @@ module Drawers
     ts = @tileset.tile_size
     img = @tileset.tiles[@selected_tile[0]][@selected_tile[1]]
     img.draw(@currently_over[1]*ts+@focus[0], @currently_over[0]*ts+@focus[1], 1000)
+    @dialog_font.draw("#{@currently_over[1]}, #{@currently_over[0]}", 0, 0, 9000, 1, 1, Gosu::Color::YELLOW)
   end
 
   def draw_selected_object

@@ -60,4 +60,9 @@ class Game
     end
   end
 
+  def do_debugger
+    debugger
+    noop = nil
+  end
+
 end

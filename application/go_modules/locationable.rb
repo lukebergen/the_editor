@@ -5,11 +5,11 @@ module Locationable
   end
 
   def tile_x(false_x = nil)
-    ((false_x || get_attribute(:x) || 0.0) / Constants::TILE_SIZE).round
+    ((false_x || get_attribute(:x) || 0.0) / Constants::TILE_SIZE).floor
   end
 
   def tile_y(false_y = nil)
-    ((false_y || get_attribute(:y) || 0.0) / Constants::TILE_SIZE).round
+    ((false_y || get_attribute(:y) || 0.0) / Constants::TILE_SIZE).floor
   end
 
   def tile_width

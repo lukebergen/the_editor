@@ -17,7 +17,7 @@ module InputHandler
           exit
 
         when Gosu::KbD
-          do_debugger
+          @game.do_debugger
 
         when Gosu::KbK
           if (@game.mode == :play)

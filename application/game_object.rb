@@ -96,7 +96,7 @@ class GameObject
     end
   end
 
-  def add_module(mod_name)
+  def add_module(mod_name, *args, &block)
     unless @modules.include?(mod_name)
       const = Utils.constantize(mod_name)
       required = (const::REQUIRES rescue [])

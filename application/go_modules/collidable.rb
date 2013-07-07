@@ -3,8 +3,13 @@ module Collidable
 
   def self.extended(klass)
     klass.instance_eval do
-      @on_tile_collision = :stop
+      set_attribute(:on_tile_collision, :stop)
+      set_attribute(:blocking, true)
     end
+  end
+
+  def is_blocking?
+    get_attribute(:blocking)
   end
 
   def collides?(arr)
@@ -19,47 +24,49 @@ module Collidable
   end
 
   def collision_block?(new_x, new_y)
-    old_tiles = next_move_tiles(get_attribute(:x), get_attribute(:y))
     with_x_shift = next_move_tiles(new_x, get_attribute(:y))
     with_y_shift = next_move_tiles(get_attribute(:x), new_y)
-    with_both_shift = next_move_tiles(new_x, new_y)
-
-    # if the result of the new move is that the object is still within the same
-    # tiles, then no collision could have occurred so...
-    if old_tiles == with_x_shift && old_tiles == with_y_shift && old_tiles == with_both_shift
-      return [false, false]
-    end
+    # with_both_shift = next_move_tiles(new_x, new_y)
 
     result = [false, false]
 
     collision_objects = collision_at?(with_x_shift)
-    if (collision_objects)
-      if (collision_objects == :tile)
-        result[0] = true
+    collision_objects.each do |collision_object|
+      if (collision_object[:type] == :tile)
+        x = collision_object[:point][0]
+        result[0] ||= [100000, -1]
+        result[0][0] = x if result[0][0] > x
+        result[0][1] = x + Constants::TILE_SIZE if result[0][1] < x
+        # result[0] = [x, x + Constants::TILE_SIZE]
       else
-        collision_objects.each do |other|
-          result[0] ||= @game.emit(object_id: other.id, message: :collide, params: {other_id: self.id})
-        end
+        obj = collision_object[:object]
+        x = obj.get_attribute(:x)
+        # result[0] = [x, x + obj.get_attribute(:width)] if obj.is_blocking?
       end
     end
 
     collision_objects = collision_at?(with_y_shift)
-    if (collision_objects)
-      if (collision_objects == :tile)
-        result[1] = true
+    collision_objects.each do |collision_object|
+      if (collision_object[:type] == :tile)
+        y = collision_object[:point][1]
+        result[1] ||= [100000, -1]
+        result[1][0] = y if result[1][0] > y
+        result[1][1] = y + Constants::TILE_SIZE if result[1][1] < y
+        # result[1] = [y, y + Constants::TILE_SIZE]
       else
-        collision_objects.each do |other|
-          result[1] = @game.emit(object_id: other.id, message: :collide, params: {other_id: self.id})
-        end
+        obj = collision_object[:object]
+        y = obj.get_attribute(:y)
+        result[1] = [y, y + obj.get_attribute(:height)] if obj.is_blocking?
       end
     end
 
-    result
+    return result[0], result[1]
   end
 
   def collision_at?(points)
-    if @game.maps[get_attribute(:current_map)].blocked?(points)
-      return :tile
+    tile_block = @game.maps[get_attribute(:current_map)].blocked?(points)
+    if tile_block
+      return [{type: :tile, point: tile_block.map {|x| x * Constants::TILE_SIZE}}]
     else
       result = []
       (@game.objects - [self]).each do |other|
@@ -71,10 +78,9 @@ module Collidable
           end
         end
         unless (points & other_arr).empty?
-          result << other
+          result << {type: :object, point: (points & other_arr), object: other}
         end
       end
-      result = nil if result.count == 0
       return result
     end
   end

@@ -8,8 +8,8 @@ def init
 
   listen_for(:key_down, :key_down)
   listen_for(:key_up, :key_up)
-  listen_for(:map_change, :map_change)
   listen_for(:collide, :on_collide)
+  listen_for(:map_change, :map_change)
 
   @img_form = "player_<dir>.png"
   @ani_form = "player_walk_<dir>"
