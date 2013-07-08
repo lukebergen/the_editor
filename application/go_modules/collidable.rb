@@ -82,10 +82,7 @@ module Collidable
   end
 
   def collide(obj = :tile)
-    puts self.name
-    if (obj != :tile)
-      emit(object_id: obj.id, message: collide, params: [self.id])
-    end
+    puts "unhandled collision by: #{self.id}:#{self.name}"
   end
 
 end

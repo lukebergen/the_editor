@@ -20,6 +20,7 @@ module Movable
   end
 
   def start_move(params)
+    return unless about_me(params)
     dir = params[:dir]
     case dir
     when :up
@@ -42,6 +43,7 @@ module Movable
   end
 
   def stop_move(params)
+    return unless about_me(params)
     dir = params[:dir]
     case dir
     when :up
@@ -217,7 +219,7 @@ module Movable
 
   def change_map(map_name)
     self.set_attribute(:current_map, map_name)
-    emit({object_id: self.id, message: :map_change, params: {name: map_name}})
+    emit({message: :map_change, params: {name: map_name, object_id: self.id}})
   end
 
 end

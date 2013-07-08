@@ -28,15 +28,15 @@ def key_down(params)
   key = params[:key]
   case key
   when :KbUp
-    emit(object_id: self.id, message: :start_move, params: {dir: :up})
+    emit(message: :start_move, params: {dir: :up, object_id: self.id})
   when :KbDown
-    emit(object_id: self.id, message: :start_move, params: {dir: :down})
+    emit(message: :start_move, params: {dir: :down, object_id: self.id})
   when :KbLeft
-    emit(object_id: self.id, message: :start_move, params: {dir: :left})
+    emit(message: :start_move, params: {dir: :left, object_id: self.id})
   when :KbRight
-    emit(object_id: self.id, message: :start_move, params: {dir: :right})
+    emit(message: :start_move, params: {dir: :right, object_id: self.id})
   when :KbSpace
-    emit(object_name: 'Chair', message: :start_move, params: {dir: :right})
+    emit(message: :start_move, params: {dir: :right, object_name: 'Chair'})
   end
 end
 
@@ -44,19 +44,20 @@ def key_up(params)
   key = params[:key]
   case key
   when :KbUp
-    emit(object_id: self.id, message: :stop_move, params: {dir: :up})
+    emit(message: :stop_move, params: {dir: :up, object_id: self.id})
   when :KbDown
-    emit(object_id: self.id, message: :stop_move, params: {dir: :down})
+    emit(message: :stop_move, params: {dir: :down, object_id: self.id})
   when :KbLeft
-    emit(object_id: self.id, message: :stop_move, params: {dir: :left})
+    emit(message: :stop_move, params: {dir: :left, object_id: self.id})
   when :KbRight
-    emit(object_id: self.id, message: :stop_move, params: {dir: :right})
+    emit(message: :stop_move, params: {dir: :right, object_id: self.id})
   when :KbSpace
-    emit(object_name: 'Chair', message: :stop_move, params: {dir: :right})
+    emit(message: :stop_move, params: {dir: :right, object_name: 'Chair'})
   end
+end
 
-  def map_change(params)
-    map_name = params[:name]
-    @game.change_map(map_name)
-  end
+def map_change(params)
+  return unless about_me?(params)
+  map_name = params[:name]
+  @game.change_map(map_name)
 end

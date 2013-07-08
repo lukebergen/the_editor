@@ -90,6 +90,11 @@ class GameObject
     @listeners.has_key?(k)
   end
 
+  def about_me?(params)
+    (params[:object_id] && params[:object_id] == self.id) ||
+    (params[:object_name] && params[:object_name] == self.name)
+  end
+
   def emit(hash, &block)
     if (@game)
       @game.emit(hash, &block)

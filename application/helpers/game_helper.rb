@@ -11,12 +11,8 @@ module GameHelper
   def emit_to_objects(hash, &block)
     message = hash[:message]
     params = hash[:params]
-    object_name = hash[:object_name]
-    object_id = hash[:object_id]
     results = []
     @objects.each do |obj|
-      next if object_name && obj.name != object_name
-      next if object_id && obj.id != object_id
       if (obj.listens_for?(message))
         callback = obj.listeners[message]
         results << obj.send(callback, params, &block)
