@@ -20,7 +20,7 @@ module Movable
   end
 
   def start_move(params)
-    return unless about_me(params)
+    return unless about_me?(params)
     dir = params[:dir]
     case dir
     when :up
@@ -43,7 +43,7 @@ module Movable
   end
 
   def stop_move(params)
-    return unless about_me(params)
+    return unless about_me?(params)
     dir = params[:dir]
     case dir
     when :up

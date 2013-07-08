@@ -65,6 +65,14 @@ module GameHelper
 
   end
 
+  def spawn(obj_name, initial_params={})
+    go = GameObject.spawn(self, obj_name, nil)
+    initial_params.each do |key, value|
+      go.set_attribute(key, value)
+    end
+    go
+  end
+
   def set_mode(m)
     @mode = m
     if (@mode == :play)

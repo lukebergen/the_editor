@@ -34,9 +34,7 @@ module InputHandler
           puts "for stuff"
 
         when Gosu::MsLeft
-          obj = GameObject.spawn($window.game, "Chair")
-          obj.set_attributes(x: $window.mouse_x, y: $window.mouse_y)
-          # params[:mouse] = window_pos_to_game_pos(mouse_x, mouse_y)
+          $window.game.spawn("Chair", x: $window.mouse_x, y: $window.mouse_y)
 
         when Gosu::MsRight
           # params[:mouse] = window_pos_to_game_pos(mouse_x, mouse_y)
