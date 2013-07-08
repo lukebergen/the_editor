@@ -12,21 +12,9 @@ module Collidable
     get_attribute(:blocking)
   end
 
-  def collides?(arr)
-
-    # check tiles
-    # edge case, checking for collisions on other maps.... sticky
-    tile_block = @game.maps[get_attribute(:current_map)].blocked?(arr)
-    return :tile if tile_block
-
-    # now check for object blocks
-    return nil
-  end
-
   def collision_block?(new_x, new_y)
     with_x_shift = next_move_tiles(new_x, get_attribute(:y))
     with_y_shift = next_move_tiles(get_attribute(:x), new_y)
-    # with_both_shift = next_move_tiles(new_x, new_y)
 
     result = [false, false]
 
@@ -37,7 +25,6 @@ module Collidable
         result[0] ||= [100000, -1]
         result[0][0] = x if result[0][0] > x
         result[0][1] = x + Constants::TILE_SIZE if result[0][1] < x
-        # result[0] = [x, x + Constants::TILE_SIZE]
       else
         obj = collision_object[:object]
         x = obj.get_attribute(:x)
@@ -52,7 +39,6 @@ module Collidable
         result[1] ||= [100000, -1]
         result[1][0] = y if result[1][0] > y
         result[1][1] = y + Constants::TILE_SIZE if result[1][1] < y
-        # result[1] = [y, y + Constants::TILE_SIZE]
       else
         obj = collision_object[:object]
         y = obj.get_attribute(:y)
