@@ -19,6 +19,10 @@ require File.join([APPLICATION_DIR, 'input_handler'])
 require File.join([APPLICATION_DIR, 'renderers', 'base'])
 require File.join([APPLICATION_DIR, 'renderers', 'edit_renderer'])
 require File.join([APPLICATION_DIR, 'renderers', 'play_renderer'])
+
+Dir.glob(File.join([APPLICATION_DIR, 'renderers', 'object_renderer', '*.rb'])).each do |renderer|
+  require renderer
+end
 require File.join([APPLICATION_DIR, 'game_states', 'main_view'])
 require File.join([APPLICATION_DIR, 'game_states', 'edit_view'])
 require File.join([APPLICATION_DIR, 'tileset'])

@@ -33,8 +33,13 @@ module InputHandler
         when Gosu::KbX
           puts "for stuff"
 
+        when Gosu::KbS
+          @game.save
+
         when Gosu::MsLeft
-          $window.game.spawn("Chair", x: $window.mouse_x, y: $window.mouse_y)
+          # $window.game.spawn("Chair", x: $window.mouse_x, y: $window.mouse_y)
+          player = $window.game.object("Player").first
+          $window.game.spawn("SpeechBubble", text: "foo", host_id: player.id, current_map: player.get_attribute(:current_map))
 
         when Gosu::MsRight
           # params[:mouse] = window_pos_to_game_pos(mouse_x, mouse_y)

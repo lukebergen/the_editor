@@ -1,0 +1,2 @@
+class UnimplementedMethod < Exception
+end

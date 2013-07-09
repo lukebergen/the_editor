@@ -4,7 +4,7 @@ module GameHelper
     name = File.basename(path)
     instances_path = File.join([path, 'instances', '*'])
     Dir.glob(instances_path).each do |inst_path|
-      GameObject.spawn(self, name, inst_path)
+      GameObject.spawn(self, name, {}, inst_path)
     end
   end
 
@@ -66,11 +66,7 @@ module GameHelper
   end
 
   def spawn(obj_name, initial_params={})
-    go = GameObject.spawn(self, obj_name, nil)
-    initial_params.each do |key, value|
-      go.set_attribute(key, value)
-    end
-    go
+    GameObject.spawn(self, obj_name, initial_params)
   end
 
   def set_mode(m)

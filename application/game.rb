@@ -31,9 +31,7 @@ class Game
 
   def save
     @objects.each do |obj|
-      json_path = File.join([APPLICATION_DIR, 'objects', obj.name, 'instances', obj.id, 'data.json'])
-      json = JSON::dump(obj.attributes)
-      File.open(json_path, 'w') {|f| f.write(json)}
+      obj.save
     end
   end
 

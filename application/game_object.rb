@@ -5,7 +5,7 @@ class GameObject
   attr_accessor :modules, :attributes, :listeners, :code_string
 
   class << self
-    def spawn(game, name, inst_path=nil)
+    def spawn(game, name, initial_attributes = {}, inst_path=nil)
       if inst_path
         id = File.basename(inst_path)
       else
@@ -16,7 +16,7 @@ class GameObject
         FileUtils.cp(File.join([class_path, 'code.rb']), File.join([inst_path, 'code.rb']))
         FileUtils.cp(File.join([class_path, 'data.json']), File.join([inst_path, 'data.json']))
       end
-      obj = GameObject.new(game, name, id)
+      obj = GameObject.new(game, name, id, initial_attributes)
       code = File.read(File.join([inst_path, 'code.rb']))
       obj.code_string = code.gsub($/, '')
       obj.instance_eval(code)
@@ -25,6 +25,7 @@ class GameObject
       hash = Utils.symbolize_keys(JSON::load(json))
       obj.attributes = obj.attributes.merge(hash)
       obj.post_json_init if obj.respond_to?(:post_json_init)
+      obj.save
       game.objects << obj
       obj
     end
@@ -34,12 +35,18 @@ class GameObject
     end
   end
 
-  def initialize(game, name, id)
+  def initialize(game, name, id, initial_attributes = {})
     @game = game
-    @attributes = {}
+    @attributes = initial_attributes
     @listeners = {}
     @modules = []
     set_attributes(name: name, id: id)
+  end
+
+  def save
+    json_path = File.join([APPLICATION_DIR, 'objects', self.name, 'instances', self.id, 'data.json'])
+    json = JSON::dump(self.attributes)
+    File.open(json_path, 'w') {|f| f.write(json)}
   end
 
   def add_attribute(name, value=nil)
@@ -72,6 +79,10 @@ class GameObject
     hash.each do |k, v|
       set_attribute(k, v)
     end
+  end
+
+  def init_attribute(key, value)
+    @attributes[key.to_sym] ||= value
   end
 
   def get_attribute(key)

@@ -56,7 +56,10 @@ module Collidable
     else
       result = []
       (@game.objects - [self]).each do |other|
-        next unless other.get_attribute(:current_map) == self.get_attribute(:current_map)
+        if (other.get_attribute(:current_map) != self.get_attribute(:current_map) ||
+            !other.has_module?(:collidable))
+          next
+        end
         other_arr = []
         (0..other.tile_width).each do |w|
           (0..other.tile_height).each do |h|

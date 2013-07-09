@@ -21,18 +21,29 @@ class PlayRenderer < Renderer::Base
     height = go.attributes[:height]
     width = go.attributes[:width]
     img_src = go.attributes[:current_image]
-    if (img_src.include?(':'))
-      split = img_src.split(':')
-      current_image = media_manager.animations[split[0]].current_image(split[1])
-    else
-      current_image = media_manager.images[go.attributes[:current_image]]
-    end
-    if (x && y && current_image)
-      fx = fy = 1
-      if (height || width)
-        fx, fy = stretch_factor(current_image, height, width)
+    if (img_src)
+      if (img_src.include?(':'))
+        split = img_src.split(':')
+        current_image = media_manager.animations[split[0]].current_image(split[1])
+      else
+        current_image = media_manager.images[go.attributes[:current_image]]
       end
-      current_image.draw(x, y, z, fx, fy)
+    end
+    if (x && y)
+      if (current_image)
+        fx = fy = 1
+        if (height || width)
+          fx, fy = stretch_factor(current_image, height, width)
+        end
+        current_image.draw(x, y, z, fx, fy)
+      else
+        renderer_class = go.get_attribute(:renderer) || go.name
+        renderer = Utils.constantize("#{renderer_class}")
+        if (renderer)
+          # use renderer to render the object I guess?
+          renderer.draw(go)
+        end
+      end
     end
   end
 
